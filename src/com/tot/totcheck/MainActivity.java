@@ -53,6 +53,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				SendFeedbackJob job = new SendFeedbackJob(spinnerProvinces.getSelectedItem().toString());
+				job.execute();
 			}
 
 			@Override
@@ -72,7 +73,7 @@ public class MainActivity extends Activity {
 		
 		public SendFeedbackJob(String province) {
 			this.province = province;
-			execute("test");
+			
 		}
 		
 		@Override
@@ -86,6 +87,10 @@ public class MainActivity extends Activity {
 			listView.setAdapter(null);
 			ListViewRowAdapter adapter = new ListViewRowAdapter(getApplicationContext(), list);
 			listView.setAdapter(adapter);
+		}
+		
+		public void execute() {
+			execute("test");
 		}
 	}
 	
