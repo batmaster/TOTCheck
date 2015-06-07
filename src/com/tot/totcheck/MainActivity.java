@@ -18,6 +18,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -98,51 +99,24 @@ public class MainActivity extends Activity {
 		List<ListViewRowItem> list = new ArrayList<ListViewRowItem>();
 		
 		try {
-			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost httpPost = new HttpPost("http://128.199.145.53/tot/getRecord.php");
-
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			Log.d("db", String.format("SELECT * FROM broken WHERE province = '%s' ORDER BY id LIMIT 30", province));
-			nameValuePairs.add(new BasicNameValuePair("select", String.format("SELECT * FROM broken WHERE province = '%s' ORDER BY id LIMIT 30", province)));
-			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-
-			HttpResponse httpResponse = httpClient.execute(httpPost);
-			HttpEntity entity = httpResponse.getEntity();
-
-			if (entity != null) {
-				InputStream is = entity.getContent();
-				StringBuffer sb = new StringBuffer();
-				String line = null;
-
-				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-				if ((line = reader.readLine()) != null) {
-					sb.append(line);
-				}
-				reader.close();
-				
-				JSONArray js = new JSONArray(sb.toString());
-				for (int i = 0; i < js.length(); i++) {
-					JSONObject jo = js.getJSONObject(i);
-					ListViewRowItem item = new ListViewRowItem(jo.getString("Id"), jo.getString("Province"), jo.getString("Device"), jo.getString("Ip"), jo.getString("Date"));
-					list.add(item);
-				}
-			} else {
-				Toast.makeText(MainActivity.this, "NULL", Toast.LENGTH_SHORT).show();
+			String parsed = Parser.parse(Request.request());
+			JSONArray js = new JSONArray(parsed);
+			for (int i = 0; i < js.length(); i++) {
+				JSONObject jo = js.getJSONObject(i);
+				ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("smsdown"), jo.getString("smsup"), "name");
+				list.add(item);
 			}
-			Log.d("db", list.size() + "");
-			if (list.size() == 0)
-				list.add(new ListViewRowItem());
 			
-			return list;
-		} catch (IOException e) {
-			e.printStackTrace();
-			list.add(new ListViewRowItem());
-			return list;
-		} catch (Exception e) {
+		} catch (JSONException e) {
 			e.printStackTrace();
 			list.add(new ListViewRowItem());
 			return list;
 		}
+		
+		if (list.size() == 0)
+			list.add(new ListViewRowItem());
+		
+		return list;
 	}
 
 	@Override
