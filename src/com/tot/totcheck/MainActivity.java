@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -37,7 +38,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
-	private static final String[] PROVINCES = {"กรุงเทพมหานคร", "กระบี่", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร", "ขอนแก่น", "จันทบุรี", "ฉะเชิงเทรา", "ชลบุรี", "ชัยนาท", "ชัยภูมิ", "ชุมพร", "เชียงราย", "เชียงใหม่", "ตรัง", "ตราด", "ตาก", "นครนายก", "นครปฐม", "นครพนม", "นครราชสีมา", "นครศรีธรรมราช", "นครสวรรค์", "นนทบุรี", "นราธิวาส", "น่าน", "บึงกาฬ", "บุรีรัมย์", "ปทุมธานี", "ประจวบคีรีขันธ์", "ปราจีนบุรี", "ปัตตานี", "พระนครศรีอยุธยา", "พังงา", "พัทลุง", "พิจิตร", "พิษณุโลก", "เพชรบุรี", "เพชรบูรณ์", "แพร่", "พะเยา", "ภูเก็ต", "มหาสารคาม", "มุกดาหาร", "แม่ฮ่องสอน", "ยะลา", "ยโสธร", "ร้อยเอ็ด", "ระนอง", "ระยอง", "ราชบุรี", "ลพบุรี", "ลำปาง", "ลำพูน", "เลย", "ศรีสะเกษ", "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ", "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี", "สิงห์บุรี", "สุโขทัย", "สุพรรณบุรี", "สุราษฎร์ธานี", "สุรินทร์", "หนองคาย", "หนองบัวลำภู", "อ่างทอง", "อุดรธานี", "อุทัยธานี", "อุตรดิตถ์", "อุบลราชธานี", "อำนาจเจริญ"};
+//	private static final String[] PROVINCES = {"กรุงเทพมหานคร", "กระบี่", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร", "ขอนแก่น", "จันทบุรี", "ฉะเชิงเทรา", "ชลบุรี", "ชัยนาท", "ชัยภูมิ", "ชุมพร", "เชียงราย", "เชียงใหม่", "ตรัง", "ตราด", "ตาก", "นครนายก", "นครปฐม", "นครพนม", "นครราชสีมา", "นครศรีธรรมราช", "นครสวรรค์", "นนทบุรี", "นราธิวาส", "น่าน", "บึงกาฬ", "บุรีรัมย์", "ปทุมธานี", "ประจวบคีรีขันธ์", "ปราจีนบุรี", "ปัตตานี", "พระนครศรีอยุธยา", "พังงา", "พัทลุง", "พิจิตร", "พิษณุโลก", "เพชรบุรี", "เพชรบูรณ์", "แพร่", "พะเยา", "ภูเก็ต", "มหาสารคาม", "มุกดาหาร", "แม่ฮ่องสอน", "ยะลา", "ยโสธร", "ร้อยเอ็ด", "ระนอง", "ระยอง", "ราชบุรี", "ลพบุรี", "ลำปาง", "ลำพูน", "เลย", "ศรีสะเกษ", "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ", "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี", "สิงห์บุรี", "สุโขทัย", "สุพรรณบุรี", "สุราษฎร์ธานี", "สุรินทร์", "หนองคาย", "หนองบัวลำภู", "อ่างทอง", "อุดรธานี", "อุทัยธานี", "อุตรดิตถ์", "อุบลราชธานี", "อำนาจเจริญ"};
 	private Spinner spinnerProvinces;
 	private ListView listView;
 
@@ -47,13 +48,13 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		spinnerProvinces = (Spinner) findViewById(R.id.spinnerProvinces);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, R.id.textView, PROVINCES);
-		spinnerProvinces.setAdapter(adapter);
+		GetProvincesTask getProvinces = new GetProvincesTask();
+		getProvinces.execute();
 		spinnerProvinces.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				SendFeedbackJob job = new SendFeedbackJob(spinnerProvinces.getSelectedItem().toString());
+				GetListTask job = new GetListTask(spinnerProvinces.getSelectedItem().toString());
 				job.execute();
 			}
 
@@ -67,19 +68,36 @@ public class MainActivity extends Activity {
 		listView = (ListView) findViewById(R.id.listView);
 	}
 	
-	private class SendFeedbackJob extends AsyncTask<String, Void, String> {
+	private class GetListTask extends AsyncTask<String, Void, String> {
 
 		private String province;
 		private List<ListViewRowItem> list;
 		
-		public SendFeedbackJob(String province) {
+		public GetListTask(String province) {
 			this.province = province;
-			
 		}
 		
 		@Override
 		protected String doInBackground(String[] params) {
-			list = requestServer(province);
+			list = new ArrayList<ListViewRowItem>();
+			
+			try {
+				String parsed = Parser.parse(Request.requestList(province));
+				JSONArray js = new JSONArray(parsed);
+				for (int i = 0; i < js.length(); i++) {
+					JSONObject jo = js.getJSONObject(i);
+					ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("smsdown"), jo.getString("smsup"), jo.getString("node_name"));
+					list.add(item);
+				}
+				
+			} catch (JSONException e) {
+				e.printStackTrace();
+				list.add(new ListViewRowItem());
+			}
+			
+			if (list.size() == 0)
+				list.add(new ListViewRowItem());
+			
 			return "some message";
 		}
 
@@ -95,29 +113,44 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	private List<ListViewRowItem> requestServer(String province) {
-		List<ListViewRowItem> list = new ArrayList<ListViewRowItem>();
+	private class GetProvincesTask extends AsyncTask<String, Void, String> {
+
+		private String[] provinces;
 		
-		try {
-			String parsed = Parser.parse(Request.request());
-			JSONArray js = new JSONArray(parsed);
-			for (int i = 0; i < js.length(); i++) {
-				JSONObject jo = js.getJSONObject(i);
-				ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("smsdown"), jo.getString("smsup"), "name");
-				list.add(item);
-			}
+		public GetProvincesTask() {
 			
-		} catch (JSONException e) {
-			e.printStackTrace();
-			list.add(new ListViewRowItem());
-			return list;
 		}
 		
-		if (list.size() == 0)
-			list.add(new ListViewRowItem());
+		@Override
+		protected String doInBackground(String[] params) {
+			try {
+				String parsed = Parser.parse(Request.request(Request.REQ_GET_PROVINCES));
+				JSONArray js = new JSONArray(parsed);
+				provinces = new String[js.length()];
+				
+				for (int i = 0; i < js.length(); i++) {
+					JSONObject jo = js.getJSONObject(i);
+					provinces[i] = jo.getString("province");
+				}
+
+
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return "some message";
+		}
+
+		@Override
+		protected void onPostExecute(String message) {
+			ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, R.id.textView, provinces);
+			spinnerProvinces.setAdapter(spinnerAdapter);
+		}
 		
-		return list;
+		public void execute() {
+			execute("test");
+		}
 	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

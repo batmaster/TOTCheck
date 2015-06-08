@@ -12,12 +12,17 @@ public class Parser {
 	}
 	
 	public static String parse(String result) {
-		result = result.replace(" ", "");
-		result = result.replace("Array([", "{\"");
-		result = result.replace("]=>", "\":\"");
-		result = result.replace("[", "\",\"");
-		result = result.replace(")", "\"},");
-		result = result.split(",\",")[0];
+//		result = result.replace(" ", "");
+		result = result.replace("Array!!!(!!!    [", "{\"");
+		result = result.replace("] => ", "\":\"");
+		result = result.replace("!!!    [", "\",\"");
+		result = result.replace("!!!)!!!", "\"},");
+		result = result.replace("!!!", "");
+		result = result.trim();
+		try {
+		if (result.charAt(result.length() - 1) == ',')
+			result = result.substring(0, result.length() - 1);
+		} catch (StringIndexOutOfBoundsException e) {}
 		return "[" + result + "]";
 	}
 }

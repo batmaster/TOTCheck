@@ -30,7 +30,7 @@ public class ListViewRowItem {
 		try {
 			this.node_time_down = new SimpleDateFormat("yyyy.MM.dd\nHH:mm:ss").format(new Timestamp(Long.parseLong(node_time_down) * 1000));
 		} catch (NumberFormatException e) {
-			this.node_time_down = "0";
+			this.node_time_down = "";
 		}
 		this.smsdown = smsdown;
 		this.smsup = smsup;
