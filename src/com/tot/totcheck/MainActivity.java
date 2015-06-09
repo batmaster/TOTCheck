@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -68,13 +69,20 @@ public class MainActivity extends Activity {
 		listView = (ListView) findViewById(R.id.listView);
 	}
 	
-	private class GetListTask extends AsyncTask<String, Void, String> {
+	private class GetListTask extends AsyncTask<String, Integer, String> {
 
 		private String province;
 		private List<ListViewRowItem> list;
 		
+		private ProgressDialog loading;
+		
 		public GetListTask(String province) {
 			this.province = province;
+			loading = new ProgressDialog(MainActivity.this);
+			loading.setTitle("รายการอุปกรณ์");
+			loading.setMessage("กำลังโหลด...");
+			loading.setCancelable(false);
+			loading.setProgressStyle(ProgressDialog.STYLE_SPINNER); 
 		}
 		
 		@Override
@@ -102,7 +110,14 @@ public class MainActivity extends Activity {
 		}
 
 		@Override
+		protected void onPreExecute() {
+			loading.show();
+			super.onPreExecute();
+		}
+
+		@Override
 		protected void onPostExecute(String message) {
+			loading.dismiss();
 			listView.setAdapter(null);
 			ListViewRowAdapter adapter = new ListViewRowAdapter(getApplicationContext(), list);
 			listView.setAdapter(adapter);
@@ -113,12 +128,18 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	private class GetProvincesTask extends AsyncTask<String, Void, String> {
+	private class GetProvincesTask extends AsyncTask<String, Integer, String> {
 
 		private String[] provinces;
 		
+		private ProgressDialog loading;
+		
 		public GetProvincesTask() {
-			
+			loading = new ProgressDialog(MainActivity.this);
+			loading.setTitle("รายชื่อจังหวัด");
+			loading.setMessage("กำลังโหลด...");
+			loading.setCancelable(false);
+			loading.setProgressStyle(ProgressDialog.STYLE_SPINNER); 
 		}
 		
 		@Override
@@ -141,7 +162,14 @@ public class MainActivity extends Activity {
 		}
 
 		@Override
+		protected void onPreExecute() {
+			loading.show();
+			super.onPreExecute();
+		}
+		
+		@Override
 		protected void onPostExecute(String message) {
+			loading.dismiss();
 			ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, R.id.textView, provinces);
 			spinnerProvinces.setAdapter(spinnerAdapter);
 		}
