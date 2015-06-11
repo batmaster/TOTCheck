@@ -51,7 +51,7 @@ public class SettingFragment extends Fragment {
 			loading = new ProgressDialog(getActivity());
 			loading.setTitle("รายชื่อจังหวัด");
 			loading.setMessage("กำลังโหลด...");
-			loading.setCancelable(false);
+//			loading.setCancelable(false);
 			loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			
 			context = getActivity().getApplicationContext();
@@ -90,6 +90,7 @@ public class SettingFragment extends Fragment {
 				PreferenceBoxView box = new PreferenceBoxView(context);
 				box.setTitle(provinces[i]);
 				box.setKey(provinces[i]);
+				box.setPref(SharedValues.TOT_PREF_PROVINCES);
 				box.setChecked(SharedValues.getEnableStatePref(context, SharedValues.TOT_PREF_PROVINCES, provinces[i]));
 				linearLayoutSetting.addView(box);
 			}

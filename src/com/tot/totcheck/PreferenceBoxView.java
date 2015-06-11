@@ -20,6 +20,8 @@ public class PreferenceBoxView extends RelativeLayout {
 	private TextView textViewTitle;
 	private TextView textViewText;
 	private CheckBox checkBoxEnable;
+	private String pref;
+
 	private String key;
 	
 	private static int titleId = 1000000;
@@ -35,6 +37,8 @@ public class PreferenceBoxView extends RelativeLayout {
 	public PreferenceBoxView(final Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		setPadding(30, 30, 30, 30);
+
+		pref = SharedValues.TOT_PREF_SETTINGS;
 		
 		RelativeLayout.LayoutParams textViewTitleLayoutParam = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		textViewTitleLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -65,7 +69,7 @@ public class PreferenceBoxView extends RelativeLayout {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				SharedValues.setEnableStatePref(context, SharedValues.TOT_PREF_PROVINCES, key, isChecked);
+				SharedValues.setEnableStatePref(context, pref, key, isChecked);
 			}
 		});
 		
@@ -105,6 +109,12 @@ public class PreferenceBoxView extends RelativeLayout {
 		return checkBoxEnable.isChecked();
 	}
 
+	public String getPref() {
+		return pref;
+	}
 
+	public void setPref(String pref) {
+		this.pref = pref;
+	}
 
 }

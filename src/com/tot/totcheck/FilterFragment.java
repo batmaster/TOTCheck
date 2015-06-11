@@ -2,6 +2,9 @@ package com.tot.totcheck;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TextView;
 
@@ -37,6 +41,7 @@ public class FilterFragment extends Fragment {
 		spinnerProvinces = (Spinner) view.findViewById(R.id.spinnerProvinces);
 		GetProvincesTask getProvinces = new GetProvincesTask();
 		getProvinces.execute();
+		
 		spinnerProvinces.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
@@ -68,7 +73,7 @@ public class FilterFragment extends Fragment {
 			loading = new ProgressDialog(getActivity());
 			loading.setTitle("รายชื่อจังหวัด");
 			loading.setMessage("กำลังโหลด...");
-			loading.setCancelable(false);
+//			loading.setCancelable(false);
 			loading.setProgressStyle(ProgressDialog.STYLE_SPINNER); 
 		}
 		
@@ -104,8 +109,8 @@ public class FilterFragment extends Fragment {
 			spinnerProvinces.setAdapter(adapter);
 		}
 		
-		public void execute() {
-			execute("test");
+		public AsyncTask<String, Integer, String> execute() {
+			return execute("test");
 		}
 	}
 	
@@ -163,8 +168,8 @@ public class FilterFragment extends Fragment {
 			listView.setAdapter(adapter);
 		}
 		
-		public void execute() {
-			execute("test");
+		public AsyncTask<String, Integer, String> execute() {
+			return execute("test");
 		}
 	}
 }
