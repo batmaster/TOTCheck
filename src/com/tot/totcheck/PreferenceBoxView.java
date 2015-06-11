@@ -1,6 +1,8 @@
 package com.tot.totcheck;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -8,12 +10,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class PreferenceBoxView extends LinearLayout {
+public class PreferenceBoxView extends RelativeLayout {
 	
 	private TextView textViewTitle;
 	private TextView textViewText;
 	private CheckBox checkBoxEnable;
 	private String key;
+	
+	private static int titleId = 1000000;
 
 	public PreferenceBoxView(Context context) {
 		this(context, null);
@@ -25,23 +29,30 @@ public class PreferenceBoxView extends LinearLayout {
 	
 	public PreferenceBoxView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		setOrientation(VERTICAL);
-//		
-//		RelativeLayout firstHorizontal = new RelativeLayout(context);
-//		RelativeLayout.LayoutParams firstLayoutParam = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-//		firstLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//		textViewTitle = new TextView(context);
-//		firstHorizontal.addView(textViewTitle, firstLayoutParam);
-//		
-//		checkBoxEnable = new CheckBox(context);
-//		RelativeLayout.LayoutParams secondLayoutParam = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-//		firstLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//		firstHorizontal.addView(checkBoxEnable, secondLayoutParam);
-//		
-//		addView(firstHorizontal);
-//		
+		setPadding(30, 30, 30, 30);
+		
+		RelativeLayout.LayoutParams textViewTitleLayoutParam = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		textViewTitleLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		textViewTitle = new TextView(context);
+		textViewTitle.setId(titleId++);
+		addView(textViewTitle, textViewTitleLayoutParam);
+		
+		RelativeLayout.LayoutParams textViewTextLayoutParam = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		textViewTextLayoutParam.addRule(RelativeLayout.BELOW, textViewTitle.getId());
 		textViewText = new TextView(context);
-		addView(textViewText);
+		addView(textViewText, textViewTextLayoutParam);
+		
+		RelativeLayout.LayoutParams checkBoxEnableLayoutParam = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		checkBoxEnableLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		checkBoxEnable = new CheckBox(context);
+		addView(checkBoxEnable, checkBoxEnableLayoutParam);
+		
+		TypedArray arrs = context.obtainStyledAttributes(attrs, R.styleable.PreferenceBoxView);
+		textViewTitle.setText(arrs.getString(R.styleable.PreferenceBoxView_title));
+		textViewText.setText(arrs.getString(R.styleable.PreferenceBoxView_text));
+		checkBoxEnable.setChecked(arrs.getBoolean(R.styleable.PreferenceBoxView_checked, false));
+		key = arrs.getString(R.styleable.PreferenceBoxView_key) ;
+
 	}
 	
 	public void setTitle(String title) {

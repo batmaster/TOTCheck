@@ -25,7 +25,7 @@ public class Request {
 	
 	public static final String REQ_GET_PROVINCES = "SELECT * FROM sector ORDER BY province";
 	public static final String REQ_DEFAULT = "";
-	private static final String REQ_GET_LIST_PROVINCE = "SELECT * FROM nodeumbo n, sector s WHERE n.node_sector = s.umbo AND s.province = '%s' AND smsdown = 'yes' AND smsup = ''".replace("'", "xxaxx") ;
+	private static final String REQ_GET_LIST_PROVINCE = "SELECT * FROM nodeumbo n, sector s WHERE n.node_sector = s.umbo AND s.province = '%s' AND smsdown = 'yes' AND smsup = ''".replace("'", "xxaxx");
 	
 	private Request() {
 		

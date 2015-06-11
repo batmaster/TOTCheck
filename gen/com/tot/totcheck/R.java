@@ -9,6 +9,38 @@ package com.tot.totcheck;
 
 public final class R {
     public static final class attr {
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int checked=0x7f010002;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int key=0x7f010003;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int text=0x7f010001;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int title=0x7f010000;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -25,18 +57,19 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_settings=0x7f08000b;
+        public static final int action_settings=0x7f08000c;
+        public static final int linearLayoutSetting=0x7f080006;
         public static final int listView=0x7f080002;
         public static final int pager=0x7f080000;
         public static final int prefNotification=0x7f080005;
         public static final int spinnerProvinces=0x7f080001;
-        public static final int textView=0x7f08000a;
+        public static final int textView=0x7f08000b;
         public static final int textView1=0x7f080003;
         public static final int textView2=0x7f080004;
-        public static final int textViewDate=0x7f080009;
-        public static final int textViewDevice=0x7f080007;
-        public static final int textViewIp=0x7f080008;
-        public static final int textViewNumber=0x7f080006;
+        public static final int textViewDate=0x7f08000a;
+        public static final int textViewDevice=0x7f080008;
+        public static final int textViewIp=0x7f080009;
+        public static final int textViewNumber=0x7f080007;
     }
     public static final class layout {
         public static final int activity_main_fragment=0x7f030000;
@@ -83,4 +116,81 @@ public final class R {
          */
         public static final int AppTheme=0x7f060001;
     }
+    public static final class styleable {
+        /** Attributes that can be used with a PreferenceBoxView.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #PreferenceBoxView_checked com.tot.totcheck:checked}</code></td><td></td></tr>
+           <tr><td><code>{@link #PreferenceBoxView_key com.tot.totcheck:key}</code></td><td></td></tr>
+           <tr><td><code>{@link #PreferenceBoxView_text com.tot.totcheck:text}</code></td><td></td></tr>
+           <tr><td><code>{@link #PreferenceBoxView_title com.tot.totcheck:title}</code></td><td></td></tr>
+           </table>
+           @see #PreferenceBoxView_checked
+           @see #PreferenceBoxView_key
+           @see #PreferenceBoxView_text
+           @see #PreferenceBoxView_title
+         */
+        public static final int[] PreferenceBoxView = {
+            0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.tot.totcheck.R.attr#checked}
+          attribute's value can be found in the {@link #PreferenceBoxView} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.tot.totcheck:checked
+        */
+        public static final int PreferenceBoxView_checked = 2;
+        /**
+          <p>This symbol is the offset where the {@link com.tot.totcheck.R.attr#key}
+          attribute's value can be found in the {@link #PreferenceBoxView} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.tot.totcheck:key
+        */
+        public static final int PreferenceBoxView_key = 3;
+        /**
+          <p>This symbol is the offset where the {@link com.tot.totcheck.R.attr#text}
+          attribute's value can be found in the {@link #PreferenceBoxView} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.tot.totcheck:text
+        */
+        public static final int PreferenceBoxView_text = 1;
+        /**
+          <p>This symbol is the offset where the {@link com.tot.totcheck.R.attr#title}
+          attribute's value can be found in the {@link #PreferenceBoxView} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.tot.totcheck:title
+        */
+        public static final int PreferenceBoxView_title = 0;
+    };
 }

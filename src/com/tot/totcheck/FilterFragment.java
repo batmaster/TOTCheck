@@ -56,6 +56,58 @@ public class FilterFragment extends Fragment {
 		return view;
 	}
 	
+	private class GetProvincesTask extends AsyncTask<String, Integer, String> {
+
+		private String[] provinces;
+		private int[] amounts;
+		
+		private ProgressDialog loading;
+		
+		public GetProvincesTask() {
+			loading = new ProgressDialog(getActivity());
+			loading.setTitle("รายชื่อจังหวัด");
+			loading.setMessage("กำลังโหลด...");
+			loading.setCancelable(false);
+			loading.setProgressStyle(ProgressDialog.STYLE_SPINNER); 
+		}
+		
+		@Override
+		protected String doInBackground(String[] params) {
+			try {
+				String parsed = Parser.parse(Request.request(Request.REQ_GET_PROVINCES));
+				JSONArray js = new JSONArray(parsed);
+				provinces = new String[js.length()];
+				amounts = new int[js.length()];
+				
+				for (int i = 0; i < js.length(); i++) {
+					JSONObject jo = js.getJSONObject(i);
+					provinces[i] = jo.getString("province");
+					amounts[i] = jo.getInt("amount");
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return "some message";
+		}
+
+		@Override
+		protected void onPreExecute() {
+			loading.show();
+			super.onPreExecute();
+		}
+		
+		@Override
+		protected void onPostExecute(String message) {
+			loading.dismiss();
+			ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.spinner_row, R.id.textView, provinces);
+			spinnerProvinces.setAdapter(spinnerAdapter);
+		}
+		
+		public void execute() {
+			execute("test");
+		}
+	}
+	
 	private class GetListTask extends AsyncTask<String, Integer, String> {
 
 		private String province;
@@ -114,56 +166,4 @@ public class FilterFragment extends Fragment {
 			execute("test");
 		}
 	}
-	
-	private class GetProvincesTask extends AsyncTask<String, Integer, String> {
-
-		private String[] provinces;
-		
-		private ProgressDialog loading;
-		
-		public GetProvincesTask() {
-			loading = new ProgressDialog(getActivity());
-			loading.setTitle("รายชื่อจังหวัด");
-			loading.setMessage("กำลังโหลด...");
-			loading.setCancelable(false);
-			loading.setProgressStyle(ProgressDialog.STYLE_SPINNER); 
-		}
-		
-		@Override
-		protected String doInBackground(String[] params) {
-			try {
-				String parsed = Parser.parse(Request.request(Request.REQ_GET_PROVINCES));
-				JSONArray js = new JSONArray(parsed);
-				provinces = new String[js.length()];
-				
-				for (int i = 0; i < js.length(); i++) {
-					JSONObject jo = js.getJSONObject(i);
-					provinces[i] = jo.getString("province");
-				}
-
-
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			return "some message";
-		}
-
-		@Override
-		protected void onPreExecute() {
-			loading.show();
-			super.onPreExecute();
-		}
-		
-		@Override
-		protected void onPostExecute(String message) {
-			loading.dismiss();
-			ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.spinner_row, R.id.textView, provinces);
-			spinnerProvinces.setAdapter(spinnerAdapter);
-		}
-		
-		public void execute() {
-			execute("test");
-		}
-	}
-
 }
