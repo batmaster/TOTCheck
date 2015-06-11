@@ -18,6 +18,8 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.sax.StartElementListener;
 import android.support.v4.app.NotificationCompat;
@@ -43,8 +45,11 @@ public class NotificationReceiver extends BroadcastReceiver {
 				if (notificationManager == null)
 					notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 				
-				if (pIntent == null)
-					pIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainFragmentActivity.class), 0);
+				if (pIntent == null) {
+					Intent appIntent = new Intent(context, MainFragmentActivity.class);
+					appIntent.putExtra("notificationTab", true);
+					pIntent = PendingIntent.getActivity(context, 0, appIntent, 0);
+				}
 				
 				GetListTask job = new GetListTask(context);
 				job.execute();
@@ -90,11 +95,15 @@ public class NotificationReceiver extends BroadcastReceiver {
 			
 			for (int i = 0; i < list.size(); i++) {
 				if (Integer.parseInt(list.get(i).getId_nu()) > SharedValues.getLastestNotifiedId(context)) {
+
+					Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+					
 					NotificationCompat.Builder noti = new NotificationCompat.Builder(context);
 			        noti.setContentTitle(list.get(i).getProvince() + " " + list.get(i).getNode_name());
 			        noti.setContentText(list.get(i).getNode_time_down());
 			        noti.setSmallIcon(R.drawable.ic_launcher);
 			        noti.setContentIntent(pIntent);
+			        noti.setSound(soundUri);
 					notificationManager.notify(NOTIFICATION_CODE, noti.build());
 					
 					SharedValues.setLastestNotifiedId(context, Integer.parseInt(list.get(i).getId_nu()));

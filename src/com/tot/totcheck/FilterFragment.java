@@ -12,6 +12,8 @@ import org.json.JSONObject;
 
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -60,7 +62,7 @@ public class FilterFragment extends Fragment {
 		});
 		
 		listView = (ListView) view.findViewById(R.id.listView);
-		
+
 		return view;
 	}
 	

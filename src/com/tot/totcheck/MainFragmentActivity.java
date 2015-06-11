@@ -97,11 +97,12 @@ public class MainFragmentActivity extends FragmentActivity {
 			Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
 			startService(notificationService);
 		}
-			
-			
-//		NotificationReceiver notificationReceiver = new NotificationReceiver();
-//		IntentFilter intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
-//		registerReceiver(notificationReceiver, intentFilter);
+		
+		boolean notificationTab = getIntent().getBooleanExtra("notificationTab", false);
+		if (notificationTab) {
+			actionBar.setSelectedNavigationItem(1);
+			viewPager.setCurrentItem(1);
+		}
 	}
 	
 	private boolean isServiceRunning(Class<?> serviceClass) {
