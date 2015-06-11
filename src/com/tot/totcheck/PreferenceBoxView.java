@@ -3,12 +3,17 @@ package com.tot.totcheck;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PreferenceBoxView extends RelativeLayout {
 	
@@ -27,7 +32,7 @@ public class PreferenceBoxView extends RelativeLayout {
 		this(context, attrs, 0);
 	}
 	
-	public PreferenceBoxView(Context context, AttributeSet attrs, int defStyle) {
+	public PreferenceBoxView(final Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		setPadding(30, 30, 30, 30);
 		
@@ -35,11 +40,14 @@ public class PreferenceBoxView extends RelativeLayout {
 		textViewTitleLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		textViewTitle = new TextView(context);
 		textViewTitle.setId(titleId++);
+		textViewTitle.setTypeface(null, Typeface.BOLD);
+		textViewTitle.setTextColor(Color.parseColor("#323232"));
 		addView(textViewTitle, textViewTitleLayoutParam);
 		
 		RelativeLayout.LayoutParams textViewTextLayoutParam = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		textViewTextLayoutParam.addRule(RelativeLayout.BELOW, textViewTitle.getId());
 		textViewText = new TextView(context);
+		textViewText.setTextColor(Color.parseColor("#323232"));
 		addView(textViewText, textViewTextLayoutParam);
 		
 		RelativeLayout.LayoutParams checkBoxEnableLayoutParam = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -52,7 +60,17 @@ public class PreferenceBoxView extends RelativeLayout {
 		textViewText.setText(arrs.getString(R.styleable.PreferenceBoxView_text));
 		checkBoxEnable.setChecked(arrs.getBoolean(R.styleable.PreferenceBoxView_checked, false));
 		key = arrs.getString(R.styleable.PreferenceBoxView_key) ;
-
+		
+		checkBoxEnable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				SharedValues.setEnableStatePref(context, SharedValues.TOT_PREF_PROVINCES, key, isChecked);
+			}
+		});
+		
+		if (textViewText.getText().toString().equals(""))
+			textViewText.setVisibility(View.GONE);
 	}
 	
 	public void setTitle(String title) {

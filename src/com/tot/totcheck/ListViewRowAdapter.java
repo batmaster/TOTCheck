@@ -13,11 +13,13 @@ public class ListViewRowAdapter extends ArrayAdapter<ListViewRowItem> {
 	
 	private Context context;
 	private List<ListViewRowItem> list;
+	private boolean showProvince;
 
-	public ListViewRowAdapter(Context context, List<ListViewRowItem> list) {
+	public ListViewRowAdapter(Context context, List<ListViewRowItem> list, boolean showProvince) {
 		super(context, R.layout.listview_row, list);
 		this.context = context;
 		this.list = list;
+		this.showProvince = showProvince;
 	}
 
 	@Override
@@ -36,6 +38,17 @@ public class ListViewRowAdapter extends ArrayAdapter<ListViewRowItem> {
 		
 		TextView date = (TextView) row.findViewById(R.id.textViewDate);
 		date.setText(list.get(position).getNode_time_down());
+		
+		TextView province = (TextView) row.findViewById(R.id.textViewProvince);
+		province.setText(list.get(position).getProvince());
+		
+		if (list.get(position).getNode_name().equals("ไม่มีรายการ")) {
+			TextView down = (TextView) row.findViewById(R.id.textViewDown);
+			down.setVisibility(View.GONE);
+		}
+		
+		if (showProvince)
+			province.setVisibility(View.VISIBLE);
 		
 		return row;
 	}

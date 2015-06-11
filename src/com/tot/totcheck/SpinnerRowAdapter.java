@@ -39,7 +39,8 @@ public class SpinnerRowAdapter extends ArrayAdapter<SpinnerRowItem> {
 		province.setText(list.get(position).getProvince());
 		
 		TextView amount = (TextView) row.findViewById(R.id.textViewAmount);
-		amount.setText(String.valueOf(list.get(position).getAmount()));
+		int a = list.get(position).getAmount();
+		amount.setText(a == 0 ? "" : String.valueOf(a));
 		
 		return row;
 	}

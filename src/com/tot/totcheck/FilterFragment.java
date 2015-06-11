@@ -130,11 +130,11 @@ public class FilterFragment extends Fragment {
 			list = new ArrayList<ListViewRowItem>();
 			
 			try {
-				String parsed = Parser.parse(Request.requestList(province));
+				String parsed = Parser.parse(Request.requestList(new String[]{province}));
 				JSONArray js = new JSONArray(parsed);
 				for (int i = 0; i < js.length(); i++) {
 					JSONObject jo = js.getJSONObject(i);
-					ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("smsdown"), jo.getString("smsup"), jo.getString("node_name"));
+					ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("smsdown"), jo.getString("smsup"), jo.getString("node_name"), province);
 					list.add(item);
 				}
 				
@@ -159,7 +159,7 @@ public class FilterFragment extends Fragment {
 		protected void onPostExecute(String message) {
 			loading.dismiss();
 			listView.setAdapter(null);
-			ListViewRowAdapter adapter = new ListViewRowAdapter(getActivity().getApplicationContext(), list);
+			ListViewRowAdapter adapter = new ListViewRowAdapter(getActivity().getApplicationContext(), list, false);
 			listView.setAdapter(adapter);
 		}
 		

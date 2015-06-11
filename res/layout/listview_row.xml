@@ -3,43 +3,68 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:weightSum="9" >
+    android:weightSum="9"
+    android:padding="8px" >
 
     <TextView
         android:id="@+id/textViewNumber"
         android:layout_width="0px"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="8px"
+        android:paddingRight="16px"
+        android:textColor="#323232"
         android:text="Number" />
 
     <LinearLayout
         android:layout_width="0px"
         android:layout_height="wrap_content"
         android:layout_weight="6"
-        android:padding="8px"
         android:orientation="vertical" >
 
         <TextView
             android:id="@+id/textViewDevice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#323232"
             android:text="Device" />
 
         <TextView
             android:id="@+id/textViewIp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#323232"
             android:text="Ip" />
+        
+        <TextView
+            android:id="@+id/textViewProvince"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:textColor="#323232"
+            android:text="Province" />
 
     </LinearLayout>
     
-    <TextView
-        android:id="@+id/textViewDate"
+    <LinearLayout
         android:layout_width="0px"
-        android:padding="8px"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:text="Date" />
+        android:orientation="vertical" >
+        
+	    <TextView
+	        android:id="@+id/textViewDate"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="#323232"
+	        android:text="Date" />
+	    
+	    <TextView
+	        android:id="@+id/textViewDown"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="#DF0101"
+	        android:text="DOWN" />
+	    
+	    </LinearLayout>
 
 </LinearLayout>

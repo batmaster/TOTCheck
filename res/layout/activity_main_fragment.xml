@@ -3,7 +3,8 @@
     android:id="@+id/pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.tot.totcheck.MainFragmentActivity" >
+    tools:context="com.tot.totcheck.MainFragmentActivity"
+    android:background="#1B75B3" >
 
     <TextView
         android:layout_width="wrap_content"
