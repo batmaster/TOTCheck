@@ -3,11 +3,6 @@ package com.tot.totcheck;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-/**
- * Temporary version.
- * @author batmaster
- *
- */
 public class ListViewRowItem {
 	
 	private String id_nu;

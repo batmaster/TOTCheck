@@ -23,7 +23,7 @@ public class Request {
 //	private static final String HOST = "http://128.199.145.53/tot/getRecord.php";
 	private static final String HOST = "http://203.114.104.242/umbo/getRecord.php";
 	
-	public static final String REQ_GET_PROVINCES = "SELECT * FROM sector ORDER BY province";
+	public static final String REQ_GET_PROVINCES = "SELECT s.province AS province, COUNT(s.province) AS amount FROM sector s, nodeumbo n WHERE n.node_sector = s.umbo AND smsdown = 'yes' AND smsup = '' GROUP BY s.province ORDER BY s.province".replace("'", "xxaxx");
 	public static final String REQ_DEFAULT = "";
 	private static final String REQ_GET_LIST_PROVINCE = "SELECT * FROM nodeumbo n, sector s WHERE n.node_sector = s.umbo AND s.province = '%s' AND smsdown = 'yes' AND smsup = ''".replace("'", "xxaxx");
 	

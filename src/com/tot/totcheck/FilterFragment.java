@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView;
 
 public class FilterFragment extends Fragment {
 	
@@ -40,7 +41,8 @@ public class FilterFragment extends Fragment {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				GetListTask job = new GetListTask(spinnerProvinces.getSelectedItem().toString());
+				String province = ((TextView) view.findViewById(R.id.textViewProvince)).getText().toString();
+				GetListTask job = new GetListTask(province);
 				job.execute();
 			}
 
@@ -58,8 +60,7 @@ public class FilterFragment extends Fragment {
 	
 	private class GetProvincesTask extends AsyncTask<String, Integer, String> {
 
-		private String[] provinces;
-		private int[] amounts;
+		private List<SpinnerRowItem> list;
 		
 		private ProgressDialog loading;
 		
@@ -73,17 +74,17 @@ public class FilterFragment extends Fragment {
 		
 		@Override
 		protected String doInBackground(String[] params) {
+			list = new ArrayList<SpinnerRowItem>();
+			
 			try {
 				String parsed = Parser.parse(Request.request(Request.REQ_GET_PROVINCES));
 				JSONArray js = new JSONArray(parsed);
-				provinces = new String[js.length()];
-				amounts = new int[js.length()];
-				
 				for (int i = 0; i < js.length(); i++) {
 					JSONObject jo = js.getJSONObject(i);
-					provinces[i] = jo.getString("province");
-					amounts[i] = jo.getInt("amount");
+					SpinnerRowItem item = new SpinnerRowItem(jo.getString("province"), jo.getInt("amount"));
+					list.add(item);
 				}
+				
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -99,8 +100,8 @@ public class FilterFragment extends Fragment {
 		@Override
 		protected void onPostExecute(String message) {
 			loading.dismiss();
-			ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.spinner_row, R.id.textView, provinces);
-			spinnerProvinces.setAdapter(spinnerAdapter);
+			SpinnerRowAdapter adapter = new SpinnerRowAdapter(getActivity().getApplicationContext(), list);
+			spinnerProvinces.setAdapter(adapter);
 		}
 		
 		public void execute() {

@@ -39,7 +39,4 @@ public class ListViewRowAdapter extends ArrayAdapter<ListViewRowItem> {
 		
 		return row;
 	}
-	
-	
-
 }
