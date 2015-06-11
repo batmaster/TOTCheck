@@ -49,6 +49,7 @@ public class FilterFragment extends Fragment {
 				String province = ((TextView) view.findViewById(R.id.textViewProvince)).getText().toString();
 				GetListTask job = new GetListTask(province);
 				job.execute();
+				SharedValues.setLastUsedProvince(getActivity().getApplicationContext(), province);
 			}
 
 			@Override
@@ -107,6 +108,12 @@ public class FilterFragment extends Fragment {
 			loading.dismiss();
 			SpinnerRowAdapter adapter = new SpinnerRowAdapter(getActivity().getApplicationContext(), list);
 			spinnerProvinces.setAdapter(adapter);
+
+			String x = SharedValues.getLastUsedProvince(getActivity().getApplicationContext());
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i).getProvince().equals(x))
+					spinnerProvinces.setSelection(i);
+			}
 		}
 		
 		public AsyncTask<String, Integer, String> execute() {

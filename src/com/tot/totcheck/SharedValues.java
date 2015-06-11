@@ -67,4 +67,16 @@ public class SharedValues {
 		editor.putInt("lastestId", id);
 		editor.commit();
 	}
+	
+	public static String getLastUsedProvince(Context context) {
+		SharedPreferences sp = context.getSharedPreferences(TOT_PREF_SETTINGS, Context.MODE_PRIVATE);
+		return sp.getString("lastUsedProvince", "");
+	}
+	
+	public static void setLastUsedProvince(Context context, String province) {
+		SharedPreferences sp = context.getSharedPreferences(TOT_PREF_SETTINGS, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sp.edit();
+		editor.putString("lastUsedProvince", province);
+		editor.commit();
+	}
 }
