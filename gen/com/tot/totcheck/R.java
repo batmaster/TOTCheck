@@ -62,13 +62,15 @@ containing a value of this type.
         public static final int pager=0x7f070000;
         public static final int preferenceBoxViewNotification=0x7f070003;
         public static final int spinnerProvinces=0x7f070001;
-        public static final int textViewAmount=0x7f07000b;
-        public static final int textViewDate=0x7f070009;
-        public static final int textViewDevice=0x7f070006;
-        public static final int textViewDown=0x7f07000a;
-        public static final int textViewIp=0x7f070007;
+        public static final int textViewAmount=0x7f07000d;
+        public static final int textViewDate=0x7f07000a;
+        public static final int textViewDevice=0x7f070007;
+        public static final int textViewDown=0x7f07000b;
+        public static final int textViewElapse=0x7f07000c;
+        public static final int textViewIp=0x7f070008;
         public static final int textViewNumber=0x7f070005;
-        public static final int textViewProvince=0x7f070008;
+        public static final int textViewProvince=0x7f070006;
+        public static final int textViewTemp=0x7f070009;
     }
     public static final class layout {
         public static final int activity_main_fragment=0x7f030000;

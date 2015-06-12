@@ -135,7 +135,7 @@ public class FilterFragment extends Fragment {
 			loading = new ProgressDialog(getActivity());
 			loading.setTitle("รายการอุปกรณ์");
 			loading.setMessage("กำลังโหลด...");
-			loading.setCancelable(false);
+//			loading.setCancelable(false);
 			loading.setProgressStyle(ProgressDialog.STYLE_SPINNER); 
 		}
 		
@@ -144,11 +144,11 @@ public class FilterFragment extends Fragment {
 			list = new ArrayList<ListViewRowItem>();
 			
 			try {
-				String parsed = Parser.parse(Request.requestList(new String[]{province}));
+				String parsed = Parser.parse(Request.requestDownList(new String[]{province}));
 				JSONArray js = new JSONArray(parsed);
 				for (int i = 0; i < js.length(); i++) {
 					JSONObject jo = js.getJSONObject(i);
-					ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("smsdown"), jo.getString("smsup"), jo.getString("node_name"), province);
+					ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("smsdown"), jo.getString("smsup"), jo.getString("node_name"), jo.getString("temp"), province);
 					list.add(item);
 				}
 				

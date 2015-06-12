@@ -13,14 +13,15 @@ public class ListViewRowItem {
 	private String smsup;
 	
 	private String node_name;
+	private String temp;
 	
 	private String province;
 	
 	public ListViewRowItem() {
-		this("", "", "", "", "", "", "ไม่มีรายการ", "");
+		this("", "", "", "", "", "", "ไม่มีรายการ", "", "");
 	}
 	
-	public ListViewRowItem(String id_nu, String node_id, String node_ip, String node_time_down, String smsdown, String smsup, String node_name, String province) {
+	public ListViewRowItem(String id_nu, String node_id, String node_ip, String node_time_down, String smsdown, String smsup, String node_name, String temp, String province) {
 		this.id_nu = id_nu;
 		this.node_id = node_id;
 		this.node_ip = node_ip;
@@ -32,6 +33,7 @@ public class ListViewRowItem {
 		this.smsdown = smsdown;
 		this.smsup = smsup;
 		this.node_name = node_name;
+		this.temp = temp;
 		this.province = province;
 	}
 
@@ -89,6 +91,16 @@ public class ListViewRowItem {
 
 	public void setNode_name(String node_name) {
 		this.node_name = node_name;
+	}
+	
+	public String getTemp() {
+		if (temp.equals("0") || temp.equals(""))
+			return "";
+		return temp + "°C";
+	}
+	
+	public void setTemp(String temp) {
+		this.temp = temp;
 	}
 	
 	public String getProvince() {

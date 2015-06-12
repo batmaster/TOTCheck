@@ -1,5 +1,13 @@
 package com.tot.totcheck;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -78,5 +86,80 @@ public class SharedValues {
 		SharedPreferences.Editor editor = sp.edit();
 		editor.putString("lastUsedProvince", province);
 		editor.commit();
+	}
+	
+	public static ArrayList<Integer> getUpListeningId(Context context) {
+		ArrayList<Integer> list = null;
+		
+		try {
+			
+			FileInputStream fis = context.openFileInput("upListeningIdList");
+			ObjectInputStream ois = new ObjectInputStream(fis);
+		    list = (ArrayList<Integer>) ois.readObject();
+		    ois.close();
+		    fis.close();
+		    
+		} catch (FileNotFoundException e) {
+			try {
+				FileOutputStream fos = context.openFileOutput("upListeningIdList", Context.MODE_PRIVATE);
+				fos.close();
+			} catch (FileNotFoundException e1) {
+			} catch (IOException e1) {
+			}
+			
+		    list = new ArrayList<Integer>();
+		} catch (IOException e) {
+		} catch (ClassNotFoundException e) {
+		}
+		return list;
+	}
+	
+	public static void  addUpListeningId(Context context, ArrayList<Integer> list) {
+		if (list == null)
+			list = new ArrayList<Integer>();
+		
+		ArrayList<Integer> fromFile = getUpListeningId(context);
+		fromFile.addAll(list);
+		
+		try {
+			
+			FileOutputStream fos = context.openFileOutput("upListeningIdList", Context.MODE_PRIVATE);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(fromFile);
+			oos.close();
+			fos.close();
+			
+		} catch (FileNotFoundException e) {
+			try {
+				FileOutputStream fos = context.openFileOutput("upListeningIdList", Context.MODE_PRIVATE);
+				fos.close();
+			} catch (FileNotFoundException e1) {
+			} catch (IOException e1) {
+			}
+			
+		    addUpListeningId(context, fromFile);
+		} catch (StreamCorruptedException e) {
+		} catch (IOException e) {
+		}	
+	}
+	
+	public static void  removeUpListeningId(Context context, ArrayList<Integer> list) {
+		if (list == null)
+			list = new ArrayList<Integer>();
+		
+		ArrayList<Integer> fromFile = getUpListeningId(context);
+		fromFile.removeAll(list);
+		
+		try {
+			
+			FileOutputStream fos = context.openFileOutput("upListeningIdList", Context.MODE_PRIVATE);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(fromFile);
+			oos.close();
+			
+		} catch (FileNotFoundException e) {
+		} catch (StreamCorruptedException e) {
+		} catch (IOException e) {
+		}	
 	}
 }
