@@ -18,15 +18,19 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver.OnScrollChangedListener;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 public class SettingFragment extends Fragment {
 	
 	private SwipeRefreshLayout swipeRefreshLayout;
 	
+	private ScrollView scrollView;
 	private PreferenceBoxView preferenceBoxViewNotification;
 	private LinearLayout linearLayoutSetting;
 	
@@ -37,6 +41,20 @@ public class SettingFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_setting, container, false);
+		
+		scrollView = (ScrollView) view.findViewById(R.id.scrollView);
+		scrollView.getViewTreeObserver().addOnScrollChangedListener(new OnScrollChangedListener() {
+			
+			@Override
+            public void onScrollChanged() {
+                int scrollY = scrollView.getScrollY();
+                if (scrollY == 0)
+                	swipeRefreshLayout.setEnabled(true);
+                else
+                	swipeRefreshLayout.setEnabled(false);
+
+            }
+		});
 		
 		preferenceBoxViewNotification = (PreferenceBoxView) view.findViewById(R.id.preferenceBoxViewNotification);
 		preferenceBoxViewNotification.setChecked(SharedValues.getEnableStatePref(getActivity().getApplicationContext(), SharedValues.TOT_PREF_SETTINGS, "notification"));

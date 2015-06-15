@@ -58,23 +58,24 @@ containing a value of this type.
         public static final int logotot=0x7f020001;
     }
     public static final class id {
-        public static final int action_search=0x7f080010;
-        public static final int imageViewIcon=0x7f08000c;
-        public static final int linearLayoutSetting=0x7f080004;
+        public static final int action_search=0x7f080011;
+        public static final int imageViewIcon=0x7f08000d;
+        public static final int linearLayoutSetting=0x7f080005;
         public static final int listView=0x7f080002;
         public static final int pager=0x7f080000;
         public static final int preferenceBoxViewNotification=0x7f080003;
+        public static final int scrollView=0x7f080004;
         public static final int spinnerProvinces=0x7f080001;
-        public static final int textViewAmount=0x7f08000f;
-        public static final int textViewDate=0x7f080009;
-        public static final int textViewDevice=0x7f080006;
-        public static final int textViewDown=0x7f08000a;
-        public static final int textViewElapse=0x7f08000b;
-        public static final int textViewIp=0x7f080007;
-        public static final int textViewProvince=0x7f080005;
-        public static final int textViewStatus=0x7f08000d;
-        public static final int textViewTemp=0x7f080008;
-        public static final int textViewTime=0x7f08000e;
+        public static final int textViewAmount=0x7f080010;
+        public static final int textViewDate=0x7f08000a;
+        public static final int textViewDevice=0x7f080007;
+        public static final int textViewDown=0x7f08000b;
+        public static final int textViewElapse=0x7f08000c;
+        public static final int textViewIp=0x7f080008;
+        public static final int textViewProvince=0x7f080006;
+        public static final int textViewStatus=0x7f08000e;
+        public static final int textViewTemp=0x7f080009;
+        public static final int textViewTime=0x7f08000f;
     }
     public static final class layout {
         public static final int activity_main_fragment=0x7f030000;

@@ -21,12 +21,17 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver.OnScrollChangedListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -67,8 +72,6 @@ public class FilterFragment extends Fragment {
 				
 			}
 		});
-		
-		listView = (ListView) view.findViewById(R.id.listView);
 
 		swipeRefreshLayout = new SwipeRefreshLayout(getActivity().getApplicationContext());
 		swipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
@@ -83,6 +86,23 @@ public class FilterFragment extends Fragment {
 			}
 		});
 		swipeRefreshLayout.addView(view);
+		
+		listView = (ListView) view.findViewById(R.id.listView);
+		listView.setOnScrollListener(new OnScrollListener() {
+			
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+				int topRowVerticalPosition = (listView == null || listView.getChildCount() == 0) ? 0 : listView.getChildAt(0).getTop();
+				swipeRefreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
+			}
+		});
+		
 		return swipeRefreshLayout;
 	}
 	
