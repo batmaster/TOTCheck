@@ -94,14 +94,35 @@ public class SharedValues {
 		editor.putString("lastUsedProvince", province);
 		editor.commit();
 	}
+	
+	public static ArrayList<Integer> getUpListeningIds(Context context) {
+		return DBHelper.getInstance(context).getUpListeningIds();
+	}
+	
+	public static void addUpListeningId(Context context, ArrayList<Integer> list) {
+		DBHelper.getInstance(context).addUpListeningId(context, list);
+	}
+	
+	public static void removeUpListeningIds(Context context, ArrayList<Integer> list) {
+		DBHelper.getInstance(context).removeUpListeningIds(context, list);
+	}
+	
 }
 
 class DBHelper extends SQLiteOpenHelper {
 	
-	private String CREATE_TABLE = "CREATE TABLE friend (id INTEGER PRIMARY KEY AUTOINCREMENT, upListeningId INTEGER)";
+	private String CREATE_TABLE = String.format("CREATE TABLE %s (id INTEGER PRIMARY KEY AUTOINCREMENT, upListeningId INTEGER)", SharedValues.TOT_SQLITE_UP_LISTENING_TABLE);
+	
+	private static DBHelper instance;
 
-    public DBHelper(Context context) {
+    private DBHelper(Context context) {
         super(context, SharedValues.TOT_SQLITE_DB, null, 1);
+    }
+    
+    public static DBHelper getInstance(Context context) {
+    	if (instance == null)
+    		instance = new DBHelper(context);
+    	return instance;
     }
     
 	@Override
@@ -114,7 +135,7 @@ class DBHelper extends SQLiteOpenHelper {
 		
 	}
 	
-	public ArrayList<Integer> getUpListeningId() {
+	public ArrayList<Integer> getUpListeningIds() {
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		
 		SQLiteDatabase db = getReadableDatabase();
@@ -150,29 +171,30 @@ class DBHelper extends SQLiteOpenHelper {
 				ids += ",";
 		}
 		
-		String sql = String.format("INSERT INTO %s VALUES %s", SharedValues.TOT_SQLITE_UP_LISTENING_TABLE, ids);
+		String sql = String.format("INSERT INTO %s (upListeningId) VALUES %s", SharedValues.TOT_SQLITE_UP_LISTENING_TABLE, ids);
 		Log.d("sql", sql);
-	    db.rawQuery(sql, null);
+	    db.execSQL(sql);
 	    db.close();
 	}
 	
-	public void removeUpListeningId(Context context, ArrayList<Integer> list) {
+	public void removeUpListeningIds(Context context, ArrayList<Integer> list) {
 		if (list.size() == 0)
 			return;
 		
 		SQLiteDatabase db = getWritableDatabase();
 
-		String ids = "";
+		String ids = "(";
 		for (int i = 0; i < list.size(); i++) {
-			ids += "(" + list.get(i) + ")";
+			ids += list.get(i);
 			
 			if (i != list.size() - 1)
 				ids += ",";
 		}
+		ids += ")";
 		
-		String sql = String.format("INSERT INTO %s VALUES %s", SharedValues.TOT_SQLITE_UP_LISTENING_TABLE, ids);
+		String sql = String.format("DELETE FROM %s WHERE upListeningId IN %s", SharedValues.TOT_SQLITE_UP_LISTENING_TABLE, ids);
 		Log.d("sql", sql);
-	    db.rawQuery(sql, null);
+	    db.execSQL(sql);
 	    db.close();
 	}
 }

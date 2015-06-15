@@ -4,7 +4,7 @@
     
     <item android:id="@+id/action_search"
           android:icon="@drawable/logotot"
-          android:title="test"
+          android:title="logo"
           android:showAsAction="ifRoom" />
 <!-- 
     <item android:id="@+id/action_settings"

@@ -1,11 +1,14 @@
 package com.tot.totcheck;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.HttpHostConnectException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,11 +79,6 @@ public class FilterFragment extends Fragment {
 				GetProvincesTask getProvinces = new GetProvincesTask();
 				getProvinces.execute();
 				
-				String province = ((TextView) spinnerProvinces.findViewById(R.id.textViewProvince)).getText().toString();
-				GetListTask job = new GetListTask(province);
-				job.execute();
-				SharedValues.setLastUsedProvince(getActivity().getApplicationContext(), province);
-				
 				swipeRefreshLayout.setRefreshing(false);
 			}
 		});
@@ -116,6 +114,13 @@ public class FilterFragment extends Fragment {
 				}
 				
 			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (ConnectTimeoutException e) {
+				loading.setMessage("เชื่อมต่อเซิร์ฟนานเกินไป");
+			} catch (SocketTimeoutException e) {
+				loading.setMessage("รอผลตอบกลับนานเกินไป");
+			} catch (HttpHostConnectException e) {
+				loading.setMessage("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้");
 				e.printStackTrace();
 			}
 			return "some message";
@@ -177,6 +182,13 @@ public class FilterFragment extends Fragment {
 			} catch (JSONException e) {
 				e.printStackTrace();
 				list.add(new ListViewRowItem());
+			} catch (ConnectTimeoutException e) {
+				loading.setMessage("เชื่อมต่อเซิร์ฟนานเกินไป");
+			} catch (SocketTimeoutException e) {
+				loading.setMessage("รอผลตอบกลับนานเกินไป");
+			} catch (HttpHostConnectException e) {
+				loading.setMessage("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้");
+				e.printStackTrace();
 			}
 			
 			if (list.size() == 0)

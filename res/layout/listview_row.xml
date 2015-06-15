@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Province"
+            android:textStyle="bold"
             android:textColor="#323232" />
 
         <TextView
@@ -23,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#323232"
+            android:textStyle="bold"
             android:text="Device" />
 
         <LinearLayout

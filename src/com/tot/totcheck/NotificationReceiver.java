@@ -1,11 +1,14 @@
 package com.tot.totcheck;
 
+import java.net.SocketTimeoutException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.HttpHostConnectException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,12 +21,14 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.sax.StartElementListener;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 public class NotificationReceiver extends BroadcastReceiver {
@@ -53,8 +58,11 @@ public class NotificationReceiver extends BroadcastReceiver {
 					pIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 				}
 				
-				GetDownTask job = new GetDownTask(context);
-				job.execute();
+				GetDownTask jobDown = new GetDownTask(context);
+				jobDown.execute();
+				
+				GetUpTask jobUp = new GetUpTask(context);
+				jobUp.execute();
 			}
 		}
 	}
@@ -84,6 +92,12 @@ public class NotificationReceiver extends BroadcastReceiver {
 			} catch (JSONException e) {
 				e.printStackTrace();
 				downList.add(new ListViewRowItem());
+			} catch (ConnectTimeoutException e) {
+				e.printStackTrace();
+			} catch (SocketTimeoutException e) {
+				e.printStackTrace();
+			} catch (HttpHostConnectException e) {
+				e.printStackTrace();
 			}
 			
 			if (downList.size() == 0)
@@ -100,13 +114,24 @@ public class NotificationReceiver extends BroadcastReceiver {
 
 					Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 					
-					NotificationCompat.Builder noti = new NotificationCompat.Builder(context);
-			        noti.setContentTitle(downList.get(i).getProvince() + " " + downList.get(i).getNode_name());
-			        noti.setContentText("DOWN " + downList.get(i).getNode_time_down());
-			        noti.setSmallIcon(R.drawable.ic_launcher);
+			        NotificationCompat.Builder noti = new NotificationCompat.Builder(context);
+					RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification);
+					remoteViews.setTextViewText(R.id.textViewDevice, downList.get(i).getProvince() + " " + downList.get(i).getNode_name());
+					remoteViews.setTextColor(R.id.textViewDevice, Color.parseColor("#4B4B4B"));
+					remoteViews.setTextViewText(R.id.textViewStatus, "DOWN ");
+					remoteViews.setTextColor(R.id.textViewStatus, Color.parseColor("#FF2222"));
+					remoteViews.setTextViewText(R.id.textViewTime, downList.get(i).getNode_time_down());
+					remoteViews.setImageViewResource(R.id.imageViewIcon, R.drawable.ic_launcher);
+					noti.setContent(remoteViews);
 			        noti.setContentIntent(pIntent);
 			        noti.setSound(soundUri);
 			        noti.setAutoCancel(true);
+			        
+			        // dummy
+			        noti.setContentText("Title");
+			        noti.setContentText("Text");
+			        noti.setSmallIcon(R.drawable.ic_launcher);
+			        
 					notificationManager.notify(NOTIFICATION_DOWN_CODE, noti.build());
 					
 					SharedValues.setLastestNotifiedId(context, Integer.parseInt(downList.get(i).getId_nu()));
@@ -114,7 +139,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 				}
 			}
 
-//			SharedValues.addUpListeningId(context, upListeningIdList);
+			SharedValues.addUpListeningId(context, upListeningIdList);
 		}
 		
 		public void execute() {
@@ -134,24 +159,28 @@ public class NotificationReceiver extends BroadcastReceiver {
 		@Override
 		protected String doInBackground(String[] params) {
 			upList = new ArrayList<ListViewRowItem>();
-//			
-//			try {
-//				String parsed = Parser.parse(Request.requestUpList(SharedValues.getUpListeningId(context)));
-//				JSONArray js = new JSONArray(parsed);
-//				for (int i = 0; i < js.length(); i++) {
-//					JSONObject jo = js.getJSONObject(i);
-//					ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("smsdown"), jo.getString("smsup"), jo.getString("node_name"), jo.getString("temp"), jo.getString("province"));
-//					upList.add(item);
-//				}
-//				
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//				upList.add(new ListViewRowItem());
-//			}
-//			
-//			if (upList.size() == 0)
-//				upList.add(new ListViewRowItem());
-//			
+			
+			try {
+				String parsed = Parser.parse(Request.requestUpList(SharedValues.getUpListeningIds(context)));
+				JSONArray js = new JSONArray(parsed);
+				for (int i = 0; i < js.length(); i++) {
+					JSONObject jo = js.getJSONObject(i);
+					ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("smsdown"), jo.getString("smsup"), jo.getString("node_name"), jo.getString("temp"), jo.getString("province"));
+					upList.add(item);
+				}
+				
+			} catch (JSONException e) {
+				e.printStackTrace();
+				upList.add(new ListViewRowItem());
+			} catch (ConnectTimeoutException e) {
+			} catch (SocketTimeoutException e) {
+			} catch (HttpHostConnectException e) {
+				e.printStackTrace();
+			}
+			
+			if (upList.size() == 0)
+				upList.add(new ListViewRowItem());
+			
 			return "some message";
 		}
 
@@ -159,24 +188,35 @@ public class NotificationReceiver extends BroadcastReceiver {
 		protected void onPostExecute(String message) {
 			ArrayList<Integer> uppedList = new ArrayList<Integer>();
 			for (int i = 0; i < upList.size(); i++) {
-				if (upList.get(i).getId_nu() != "" && Integer.parseInt(upList.get(i).getId_nu()) > SharedValues.getLastestNotifiedId(context)) {
+				if (upList.get(i).getId_nu() != "") {
 
 					Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 					
 					NotificationCompat.Builder noti = new NotificationCompat.Builder(context);
-			        noti.setContentTitle(upList.get(i).getProvince() + " " + upList.get(i).getNode_name());
-			        noti.setContentText("UP");
-			        noti.setSmallIcon(R.drawable.ic_launcher);
+					RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification);
+					remoteViews.setTextViewText(R.id.textViewDevice, upList.get(i).getProvince() + " " + upList.get(i).getNode_name());
+					remoteViews.setTextColor(R.id.textViewDevice, Color.parseColor("#4B4B4B"));
+					remoteViews.setTextViewText(R.id.textViewStatus, "UP");
+					remoteViews.setTextColor(R.id.textViewStatus, Color.parseColor("#22FF22"));
+					remoteViews.setTextViewText(R.id.textViewTime, "");
+					remoteViews.setImageViewResource(R.id.imageViewIcon, R.drawable.ic_launcher);
+					noti.setContent(remoteViews);
 			        noti.setContentIntent(pIntent);
 			        noti.setSound(soundUri);
 			        noti.setAutoCancel(true);
+			        
+			        // dummy
+			        noti.setContentText("Title");
+			        noti.setContentText("Text");
+			        noti.setSmallIcon(R.drawable.ic_launcher);
+			        
 					notificationManager.notify(NOTIFICATION_UP_CODE, noti.build());
 					
 					uppedList.add(Integer.parseInt(upList.get(i).getId_nu()));
 				}
 			}
 
-//			SharedValues.removeUpListeningId(context, uppedList);
+			SharedValues.removeUpListeningIds(context, uppedList);
 		}
 		
 		public void execute() {

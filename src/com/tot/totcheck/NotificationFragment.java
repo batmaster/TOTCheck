@@ -1,8 +1,11 @@
 package com.tot.totcheck;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.HttpHostConnectException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,6 +94,13 @@ public class NotificationFragment extends Fragment {
 			} catch (JSONException e) {
 				e.printStackTrace();
 				list.add(new ListViewRowItem());
+			} catch (ConnectTimeoutException e) {
+				loading.setMessage("เชื่อมต่อเซิร์ฟนานเกินไป");
+			} catch (SocketTimeoutException e) {
+				loading.setMessage("รอผลตอบกลับนานเกินไป");
+			} catch (HttpHostConnectException e) {
+				loading.setMessage("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้");
+				e.printStackTrace();
 			}
 			
 			if (list.size() == 0)

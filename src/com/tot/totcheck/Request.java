@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +16,13 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 public class Request {
 
@@ -32,23 +38,24 @@ public class Request {
 		
 	}
 	
-	public static String requestUpList(ArrayList<Integer> upList) {
+	public static String requestUpList(ArrayList<Integer> upList) throws ConnectTimeoutException, SocketTimeoutException, HttpHostConnectException {
 		String arg = "";
 		for (int i = 0; i < upList.size(); i++) {
 			arg += upList.get(i);
 			if (i != upList.size() - 1)
 				arg += ",";
 		}
-		String x = String.format(REQ_GET_UPLIST, arg);
-		int a = 9;
-		return request(x);
+		if (upList.size() == 0)
+			arg += "0";
+		
+		return request(String.format(REQ_GET_UPLIST, arg));
 	}
 	
-	public static String requestDownList(String[] provinces) {
+	public static String requestDownList(String[] provinces) throws ConnectTimeoutException, SocketTimeoutException, HttpHostConnectException {
 		return requestDownList(provinces, 0);
 	}
 	
-	public static String requestDownList(String[] provinces, int startId) {
+	public static String requestDownList(String[] provinces, int startId) throws ConnectTimeoutException, SocketTimeoutException, HttpHostConnectException {
 		String arg = "";
 		for (int i = 0; i < provinces.length; i++) {
 			arg += "'" + provinces[i] + "'";
@@ -61,14 +68,18 @@ public class Request {
 		return request(String.format(REQ_GET_DOWNLIST, arg, startId));
 	}
 	
-	public static String request() {
+	public static String request() throws ConnectTimeoutException, SocketTimeoutException, HttpHostConnectException {
 		return request(REQ_DEFAULT);
 	}
 	
-	public static String request(String str) {
+	public static String request(String str) throws org.apache.http.conn.ConnectTimeoutException, java.net.SocketTimeoutException, org.apache.http.conn.HttpHostConnectException {
 		str = str.replace("'", "xxaxx").replace("(", "xxbxx").replace(")", "xxcxx").replace(">", "xxdxx");
 		try {
-			HttpClient httpClient = new DefaultHttpClient();
+			HttpParams httpParameters = new BasicHttpParams();
+			HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
+			HttpConnectionParams.setSoTimeout(httpParameters, 10000);
+
+			HttpClient httpClient = new DefaultHttpClient(httpParameters);
 			HttpPost httpPost = new HttpPost(HOST);
 	
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -77,6 +88,8 @@ public class Request {
 			
 			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 	
+
+			
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity entity = httpResponse.getEntity();
 	

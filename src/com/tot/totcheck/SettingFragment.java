@@ -1,9 +1,12 @@
 package com.tot.totcheck;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.HttpHostConnectException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,12 +16,16 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 public class SettingFragment extends Fragment {
+	
+	private SwipeRefreshLayout swipeRefreshLayout;
 	
 	private PreferenceBoxView preferenceBoxViewNotification;
 	private LinearLayout linearLayoutSetting;
@@ -37,7 +44,21 @@ public class SettingFragment extends Fragment {
 		linearLayoutSetting = (LinearLayout) view.findViewById(R.id.linearLayoutSetting);
 		GetProvincesTask getProvinces = new GetProvincesTask();
 		getProvinces.execute();
-		return view;
+		
+		swipeRefreshLayout = new SwipeRefreshLayout(getActivity().getApplicationContext());
+		swipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+			
+			@Override
+			public void onRefresh() {
+				// รายชื่อจังหวัด dialog ยังโดน override อยู่
+				GetProvincesTask getProvinces = new GetProvincesTask();
+				getProvinces.execute();
+				
+				swipeRefreshLayout.setRefreshing(false);
+			}
+		});
+		swipeRefreshLayout.addView(view);
+		return swipeRefreshLayout;
 	}
 	
 	private class GetProvincesTask extends AsyncTask<String, Integer, String> {
@@ -73,6 +94,13 @@ public class SettingFragment extends Fragment {
 				}
 				
 			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (ConnectTimeoutException e) {
+				loading.setMessage("เชื่อมต่อเซิร์ฟนานเกินไป");
+			} catch (SocketTimeoutException e) {
+				loading.setMessage("รอผลตอบกลับนานเกินไป");
+			} catch (HttpHostConnectException e) {
+				loading.setMessage("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้");
 				e.printStackTrace();
 			}
 			return "some message";
