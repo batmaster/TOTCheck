@@ -114,7 +114,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 				}
 			}
 
-			SharedValues.addUpListeningId(context, upListeningIdList);
+//			SharedValues.addUpListeningId(context, upListeningIdList);
 		}
 		
 		public void execute() {
@@ -134,24 +134,24 @@ public class NotificationReceiver extends BroadcastReceiver {
 		@Override
 		protected String doInBackground(String[] params) {
 			upList = new ArrayList<ListViewRowItem>();
-			
-			try {
-				String parsed = Parser.parse(Request.requestUpList(SharedValues.getUpListeningId(context)));
-				JSONArray js = new JSONArray(parsed);
-				for (int i = 0; i < js.length(); i++) {
-					JSONObject jo = js.getJSONObject(i);
-					ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("smsdown"), jo.getString("smsup"), jo.getString("node_name"), jo.getString("temp"), jo.getString("province"));
-					upList.add(item);
-				}
-				
-			} catch (JSONException e) {
-				e.printStackTrace();
-				upList.add(new ListViewRowItem());
-			}
-			
-			if (upList.size() == 0)
-				upList.add(new ListViewRowItem());
-			
+//			
+//			try {
+//				String parsed = Parser.parse(Request.requestUpList(SharedValues.getUpListeningId(context)));
+//				JSONArray js = new JSONArray(parsed);
+//				for (int i = 0; i < js.length(); i++) {
+//					JSONObject jo = js.getJSONObject(i);
+//					ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("smsdown"), jo.getString("smsup"), jo.getString("node_name"), jo.getString("temp"), jo.getString("province"));
+//					upList.add(item);
+//				}
+//				
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//				upList.add(new ListViewRowItem());
+//			}
+//			
+//			if (upList.size() == 0)
+//				upList.add(new ListViewRowItem());
+//			
 			return "some message";
 		}
 
@@ -176,7 +176,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 				}
 			}
 
-			SharedValues.removeUpListeningId(context, uppedList);
+//			SharedValues.removeUpListeningId(context, uppedList);
 		}
 		
 		public void execute() {

@@ -9,6 +9,8 @@ import org.json.JSONObject;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -20,9 +22,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class NotificationFragment extends Fragment {
+	
+	private SwipeRefreshLayout swipeRefreshLayout;
 	
 	private ListView listView;
 	
@@ -38,7 +43,19 @@ public class NotificationFragment extends Fragment {
 		GetListTask job = new GetListTask(getActivity().getApplicationContext());
 		job.execute();
 		
-		return view;
+		swipeRefreshLayout = new SwipeRefreshLayout(getActivity().getApplicationContext());
+		swipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+			
+			@Override
+			public void onRefresh() {
+				GetListTask job = new GetListTask(getActivity().getApplicationContext());
+				job.execute();
+				
+				swipeRefreshLayout.setRefreshing(false);
+			}
+		});
+		swipeRefreshLayout.addView(view);
+		return swipeRefreshLayout;
 	}
 	
 	private class GetListTask extends AsyncTask<String, Integer, String> {
@@ -46,8 +63,16 @@ public class NotificationFragment extends Fragment {
 		private Context context;
 		private List<ListViewRowItem> list;
 		
+		private ProgressDialog loading;
+		
 		public GetListTask(Context context) {
 			this.context = context;
+			
+			loading = new ProgressDialog(getActivity());
+			loading.setTitle("รายการแจ้งเตือน");
+			loading.setMessage("กำลังโหลด...");
+//			loading.setCancelable(false);
+			loading.setProgressStyle(ProgressDialog.STYLE_SPINNER); 
 		}
 		
 		@Override
@@ -73,9 +98,16 @@ public class NotificationFragment extends Fragment {
 			
 			return "some message";
 		}
+		
+		@Override
+		protected void onPreExecute() {
+			loading.show();
+			super.onPreExecute();
+		}
 
 		@Override
 		protected void onPostExecute(String message) {
+			loading.dismiss();
 			
 			listView.setAdapter(null);
 			ListViewRowAdapter adapter = new ListViewRowAdapter(getActivity().getApplicationContext(), list, true);

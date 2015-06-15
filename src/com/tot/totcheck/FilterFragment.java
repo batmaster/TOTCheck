@@ -11,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.app.ProgressDialog;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -28,6 +30,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TextView;
 
 public class FilterFragment extends Fragment {
+	
+	private SwipeRefreshLayout swipeRefreshLayout;
 	
 	private Spinner spinnerProvinces;
 	private ListView listView;
@@ -63,7 +67,25 @@ public class FilterFragment extends Fragment {
 		
 		listView = (ListView) view.findViewById(R.id.listView);
 
-		return view;
+		swipeRefreshLayout = new SwipeRefreshLayout(getActivity().getApplicationContext());
+		swipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+			
+			@Override
+			public void onRefresh() {
+				// รายชื่อจังหวัด dialog ยังโดน override อยู่
+				GetProvincesTask getProvinces = new GetProvincesTask();
+				getProvinces.execute();
+				
+				String province = ((TextView) spinnerProvinces.findViewById(R.id.textViewProvince)).getText().toString();
+				GetListTask job = new GetListTask(province);
+				job.execute();
+				SharedValues.setLastUsedProvince(getActivity().getApplicationContext(), province);
+				
+				swipeRefreshLayout.setRefreshing(false);
+			}
+		});
+		swipeRefreshLayout.addView(view);
+		return swipeRefreshLayout;
 	}
 	
 	private class GetProvincesTask extends AsyncTask<String, Integer, String> {

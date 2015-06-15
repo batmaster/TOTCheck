@@ -11,7 +11,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:background="#E3E3E3"
+        android:paddingLeft="24px"
+        android:paddingRight="24px" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -22,8 +25,7 @@
         <Spinner
             android:id="@+id/spinnerProvinces"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
@@ -31,14 +33,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-    	android:background="#E3E3E3" 
+    	android:background="#FFFFFF" 
         android:padding="4px" >
 
         <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-             >
+            android:layout_height="match_parent" >
         </ListView>
     </ScrollView>
 

@@ -26,7 +26,7 @@ public class ListViewRowItem {
 		this.node_id = node_id;
 		this.node_ip = node_ip;
 		try {
-			this.node_time_down = new SimpleDateFormat("yyyy.MM.dd\nHH:mm:ss").format(new Timestamp(Long.parseLong(node_time_down) * 1000));
+			this.node_time_down = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Timestamp(Long.parseLong(node_time_down) * 1000));
 		} catch (NumberFormatException e) {
 			this.node_time_down = "";
 		}

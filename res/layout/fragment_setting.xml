@@ -14,6 +14,7 @@
         android:id="@+id/preferenceBoxViewNotification"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#E3E3E3"
         custom:title="เปิดการใช้งานการแจ้งเตือน"
         custom:text="แจ้งเตือนบนแถบสถานะ"
         custom:key="notification" />
@@ -22,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        android:background="#E3E3E3" 
+        android:background="#FFFFFF" 
         android:padding="4px" >
 
         <LinearLayout

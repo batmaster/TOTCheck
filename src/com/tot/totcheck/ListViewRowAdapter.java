@@ -32,9 +32,6 @@ public class ListViewRowAdapter extends ArrayAdapter<ListViewRowItem> {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View row = inflater.inflate(R.layout.listview_row, parent, false);
 		
-		TextView number = (TextView) row.findViewById(R.id.textViewNumber);
-		number.setText(String.valueOf(list.get(position).getId_nu()));
-		
 		TextView province = (TextView) row.findViewById(R.id.textViewProvince);
 		province.setText(list.get(position).getProvince());
 		
@@ -49,9 +46,8 @@ public class ListViewRowAdapter extends ArrayAdapter<ListViewRowItem> {
 		
 		TextView elapse = (TextView) row.findViewById(R.id.textViewElapse);
 		try {
-			DateFormat format = new SimpleDateFormat("yyyy.MM.dd\nHH:mm:ss");
+			DateFormat format = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 			Date d = format.parse(list.get(position).getNode_time_down());
-			
 			
 			elapse.setText(getDateDiff(d, new Date()));
 			
@@ -69,7 +65,6 @@ public class ListViewRowAdapter extends ArrayAdapter<ListViewRowItem> {
 		if (list.get(position).getNode_name().equals("ไม่มีรายการ")) {
 			TextView down = (TextView) row.findViewById(R.id.textViewDown);
 			down.setVisibility(View.GONE);
-			number.setVisibility(View.GONE);
 			province.setVisibility(View.GONE);
 			ip.setVisibility(View.GONE);
 			date.setVisibility(View.GONE);

@@ -17,11 +17,18 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class SharedValues {
 	
 	public static final String TOT_PREF_SETTINGS = "TOT_PREF_SETTINGS";
 	public static final String TOT_PREF_PROVINCES = "TOT_PREF_PROVINCES";
+	
+	public static final String TOT_SQLITE_DB = "umbo.db";
+	public static final String TOT_SQLITE_UP_LISTENING_TABLE = "upListening";
 	
 	private SharedValues () {
 		
@@ -87,79 +94,85 @@ public class SharedValues {
 		editor.putString("lastUsedProvince", province);
 		editor.commit();
 	}
+}
+
+class DBHelper extends SQLiteOpenHelper {
 	
-	public static ArrayList<Integer> getUpListeningId(Context context) {
-		ArrayList<Integer> list = null;
+	private String CREATE_TABLE = "CREATE TABLE friend (id INTEGER PRIMARY KEY AUTOINCREMENT, upListeningId INTEGER)";
+
+    public DBHelper(Context context) {
+        super(context, SharedValues.TOT_SQLITE_DB, null, 1);
+    }
+    
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+		db.execSQL(CREATE_TABLE);
+	}
+	
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		
-		try {
-			
-			FileInputStream fis = context.openFileInput("upListeningIdList");
-			ObjectInputStream ois = new ObjectInputStream(fis);
-		    list = (ArrayList<Integer>) ois.readObject();
-		    ois.close();
-		    fis.close();
-		    
-		} catch (FileNotFoundException e) {
-			try {
-				FileOutputStream fos = context.openFileOutput("upListeningIdList", Context.MODE_PRIVATE);
-				fos.close();
-			} catch (FileNotFoundException e1) {
-			} catch (IOException e1) {
-			}
-			
-		    list = new ArrayList<Integer>();
-		} catch (IOException e) {
-		} catch (ClassNotFoundException e) {
-		}
+	}
+	
+	public ArrayList<Integer> getUpListeningId() {
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		
+		SQLiteDatabase db = getReadableDatabase();
+
+		String sql = String.format("SELECT * FROM %s", SharedValues.TOT_SQLITE_UP_LISTENING_TABLE);
+		Log.d("sql", sql);
+	    Cursor cursor = db.rawQuery(sql, null);
+
+	    if (cursor != null) {
+	        cursor.moveToFirst();
+	    }
+
+	    while (!cursor.isAfterLast()) {
+	    	list.add(cursor.getInt(1));
+	        cursor.moveToNext();
+	    }
+
+	    db.close();
 		return list;
 	}
 	
-	public static void  addUpListeningId(Context context, ArrayList<Integer> list) {
-		if (list == null)
-			list = new ArrayList<Integer>();
+	public void addUpListeningId(Context context, ArrayList<Integer> list) {
+		if (list.size() == 0)
+			return;
 		
-		ArrayList<Integer> fromFile = getUpListeningId(context);
-		fromFile.addAll(list);
+		SQLiteDatabase db = getWritableDatabase();
+
+		String ids = "";
+		for (int i = 0; i < list.size(); i++) {
+			ids += "(" + list.get(i) + ")";
+			
+			if (i != list.size() - 1)
+				ids += ",";
+		}
 		
-		try {
-			
-			FileOutputStream fos = context.openFileOutput("upListeningIdList", Context.MODE_PRIVATE);
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
-			oos.writeObject(fromFile);
-			oos.close();
-			fos.close();
-			
-		} catch (FileNotFoundException e) {
-			try {
-				FileOutputStream fos = context.openFileOutput("upListeningIdList", Context.MODE_PRIVATE);
-				fos.close();
-			} catch (FileNotFoundException e1) {
-			} catch (IOException e1) {
-			}
-			
-		    addUpListeningId(context, fromFile);
-		} catch (StreamCorruptedException e) {
-		} catch (IOException e) {
-		}	
+		String sql = String.format("INSERT INTO %s VALUES %s", SharedValues.TOT_SQLITE_UP_LISTENING_TABLE, ids);
+		Log.d("sql", sql);
+	    db.rawQuery(sql, null);
+	    db.close();
 	}
 	
-	public static void  removeUpListeningId(Context context, ArrayList<Integer> list) {
-		if (list == null)
-			list = new ArrayList<Integer>();
+	public void removeUpListeningId(Context context, ArrayList<Integer> list) {
+		if (list.size() == 0)
+			return;
 		
-		ArrayList<Integer> fromFile = getUpListeningId(context);
-		fromFile.removeAll(list);
+		SQLiteDatabase db = getWritableDatabase();
+
+		String ids = "";
+		for (int i = 0; i < list.size(); i++) {
+			ids += "(" + list.get(i) + ")";
+			
+			if (i != list.size() - 1)
+				ids += ",";
+		}
 		
-		try {
-			
-			FileOutputStream fos = context.openFileOutput("upListeningIdList", Context.MODE_PRIVATE);
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
-			oos.writeObject(fromFile);
-			oos.close();
-			
-		} catch (FileNotFoundException e) {
-		} catch (StreamCorruptedException e) {
-		} catch (IOException e) {
-		}	
+		String sql = String.format("INSERT INTO %s VALUES %s", SharedValues.TOT_SQLITE_UP_LISTENING_TABLE, ids);
+		Log.d("sql", sql);
+	    db.rawQuery(sql, null);
+	    db.close();
 	}
 }
