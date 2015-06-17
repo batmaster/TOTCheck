@@ -132,6 +132,7 @@ public class SettingFragment extends Fragment {
 		
 		@Override
 		protected void onPostExecute(String message) {
+			linearLayoutSetting.removeAllViews();
 			for (int i = 0; i < provinces.length; i++) {
 				PreferenceBoxView box = new PreferenceBoxView(context);
 				box.setTitle(provinces[i]);

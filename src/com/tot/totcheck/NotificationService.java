@@ -10,10 +10,10 @@ import android.widget.Toast;
 public class NotificationService extends Service {
 	
 	private static BroadcastReceiver notificationReceiver;
-	private final static IntentFilter intentFilter;
+	private final static IntentFilter intentTimeTickFilter;
 	
 	static {
-		intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
+		intentTimeTickFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class NotificationService extends Service {
 		super.onCreate();
 		
 		notificationReceiver = new NotificationReceiver();
-		registerReceiver(notificationReceiver, intentFilter);
+		registerReceiver(notificationReceiver, intentTimeTickFilter);
 	}
 
 	@Override

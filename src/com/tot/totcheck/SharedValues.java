@@ -20,9 +20,18 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 
 public class SharedValues {
+	
+	// http://128.199.145.53/tot/
+	public static final String HOST_DB = "http://203.114.104.242/umbo/getRecord.php";
+	public static final String HOST_VERSION = "http://203.114.104.242/umbo/getVersion.php";
+	
+	public final static String FILE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/totapk/";
+	public final static String FILE_NAME = "TOTUmbo.apk";
+	public static final String HOST_APK = "http://203.114.104.242/umbo/TOTUmbo.apk";
 	
 	public static final String TOT_PREF_SETTINGS = "TOT_PREF_SETTINGS";
 	public static final String TOT_PREF_PROVINCES = "TOT_PREF_PROVINCES";
@@ -153,7 +162,6 @@ class DBHelper extends SQLiteOpenHelper {
 	        cursor.moveToNext();
 	    }
 
-	    db.close();
 		return list;
 	}
 	
@@ -174,7 +182,6 @@ class DBHelper extends SQLiteOpenHelper {
 		String sql = String.format("INSERT INTO %s (upListeningId) VALUES %s", SharedValues.TOT_SQLITE_UP_LISTENING_TABLE, ids);
 		Log.d("sql", sql);
 	    db.execSQL(sql);
-	    db.close();
 	}
 	
 	public void removeUpListeningIds(Context context, ArrayList<Integer> list) {
@@ -195,6 +202,5 @@ class DBHelper extends SQLiteOpenHelper {
 		String sql = String.format("DELETE FROM %s WHERE upListeningId IN %s", SharedValues.TOT_SQLITE_UP_LISTENING_TABLE, ids);
 		Log.d("sql", sql);
 	    db.execSQL(sql);
-	    db.close();
 	}
 }

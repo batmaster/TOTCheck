@@ -25,9 +25,6 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 public class Request {
-
-//	private static final String HOST = "http://128.199.145.53/tot/getRecord.php";
-	private static final String HOST = "http://203.114.104.242/umbo/getRecord.php";
 	
 	public static final String REQ_GET_PROVINCES = "SELECT s.province AS province, SUM(CASE WHEN smsdown = 'yes' AND smsup = '' THEN 1 ELSE 0 END) AS amount FROM sector s, nodeumbo n WHERE n.node_sector = s.umbo GROUP BY s.province ORDER BY s.province";
 	public static final String REQ_DEFAULT = "";
@@ -76,20 +73,17 @@ public class Request {
 		str = str.replace("'", "xxaxx").replace("(", "xxbxx").replace(")", "xxcxx").replace(">", "xxdxx");
 		try {
 			HttpParams httpParameters = new BasicHttpParams();
-			HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
+			HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
 			HttpConnectionParams.setSoTimeout(httpParameters, 10000);
 
 			HttpClient httpClient = new DefaultHttpClient(httpParameters);
-			HttpPost httpPost = new HttpPost(HOST);
+			HttpPost httpPost = new HttpPost(SharedValues.HOST_DB);
 	
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("sql", str));
-			nameValuePairs.add(new BasicNameValuePair("log", ""));
 			
 			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 	
-
-			
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity entity = httpResponse.getEntity();
 	
@@ -101,6 +95,47 @@ public class Request {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 				while ((line = reader.readLine()) != null) {
 					sb.append(line + "!!!");
+				}
+				reader.close();
+	
+				return sb.toString();
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return "";
+	}
+	
+	public static String getVersion() throws ConnectTimeoutException, SocketTimeoutException, HttpHostConnectException {
+		try {
+			HttpParams httpParameters = new BasicHttpParams();
+			HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
+			HttpConnectionParams.setSoTimeout(httpParameters, 10000);
+
+			HttpClient httpClient = new DefaultHttpClient(httpParameters);
+			HttpPost httpPost = new HttpPost(SharedValues.HOST_VERSION);
+	
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("version", ""));
+			
+			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+	
+			HttpResponse httpResponse = httpClient.execute(httpPost);
+			HttpEntity entity = httpResponse.getEntity();
+	
+			if (entity != null) {
+				InputStream is = entity.getContent();
+				StringBuffer sb = new StringBuffer();
+				String line = null;
+	
+				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+				while ((line = reader.readLine()) != null) {
+					sb.append(line + ",");
 				}
 				reader.close();
 	
