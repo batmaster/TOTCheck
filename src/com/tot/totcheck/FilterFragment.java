@@ -78,7 +78,6 @@ public class FilterFragment extends Fragment {
 			
 			@Override
 			public void onRefresh() {
-				// รายชื่อจังหวัด dialog ยังโดน override อยู่
 				GetProvincesTask getProvinces = new GetProvincesTask();
 				getProvinces.execute();
 				

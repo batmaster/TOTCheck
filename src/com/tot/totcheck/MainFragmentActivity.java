@@ -77,13 +77,11 @@ public class MainFragmentActivity extends FragmentActivity {
 			
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
-				// TODO Auto-generated method stub
 				
 			}
 			
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
-				// TODO Auto-generated method stub
 				
 			}
 		});
@@ -95,7 +93,6 @@ public class MainFragmentActivity extends FragmentActivity {
 			
 			@Override
 			public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-				// TODO Auto-generated method stub
 				
 			}
 			
@@ -106,7 +103,6 @@ public class MainFragmentActivity extends FragmentActivity {
 			
 			@Override
 			public void onTabReselected(Tab tab, FragmentTransaction ft) {
-				// TODO Auto-generated method stub
 				
 			}
 		};
@@ -141,7 +137,6 @@ public class MainFragmentActivity extends FragmentActivity {
 		File apk = new File(SharedValues.FILE_PATH, SharedValues.FILE_NAME);
 		if (apk.exists())
 			apk.delete();
-		
 	}
 	
 	@Override
@@ -222,15 +217,15 @@ public class MainFragmentActivity extends FragmentActivity {
             dialog.setCancelable(true);
             
             if (!version.equals("")) {
-	            String currentVersionName = "";
+	            double currentVersionName = 0;
 				try {
-					currentVersionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+					currentVersionName = Double.parseDouble(getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
 				} catch (NameNotFoundException e) {
 					e.printStackTrace();
 				}
-	            String versionName = version.split(",")[0];
+	            double versionName = Double.parseDouble(version.split(",")[0]);
 	            
-	            if (currentVersionName.equals(versionName)) {
+	            if (currentVersionName == versionName) {
 	            	TextView textViewCurrentVersionName = (TextView) dialog.findViewById(R.id.textViewCurrentVersionName);
 	            	textViewCurrentVersionName.setText("เวอร์ชันปัจจุบัน " + currentVersionName);
 	            	
@@ -256,6 +251,9 @@ public class MainFragmentActivity extends FragmentActivity {
 							task.execute();
 						}
 					});
+	                
+	                if (currentVersionName > versionName)
+	                	buttonUpdate.setVisibility(View.GONE);
 	            }
             }
             else {
@@ -377,7 +375,6 @@ class PagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem(int arg0) {
-
 		Fragment fragment = null;
 		
 		if (arg0 == 0)
@@ -392,7 +389,6 @@ class PagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
 		return 3;
 	}
 }
