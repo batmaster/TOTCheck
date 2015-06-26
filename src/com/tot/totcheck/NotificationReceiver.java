@@ -1,5 +1,6 @@
 package com.tot.totcheck;
 
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -98,6 +99,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 				e.printStackTrace();
 			} catch (HttpHostConnectException e) {
 				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 			
 			if (downList.size() == 0)
@@ -173,9 +176,13 @@ public class NotificationReceiver extends BroadcastReceiver {
 				e.printStackTrace();
 				upList.add(new ListViewRowItem());
 			} catch (ConnectTimeoutException e) {
+				
 			} catch (SocketTimeoutException e) {
+				
 			} catch (HttpHostConnectException e) {
-				e.printStackTrace();
+				
+			} catch (IOException e) {
+				
 			}
 			
 			if (upList.size() == 0)

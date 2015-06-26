@@ -35,7 +35,7 @@ public class Request {
 		
 	}
 	
-	public static String requestUpList(ArrayList<Integer> upList) throws ConnectTimeoutException, SocketTimeoutException, HttpHostConnectException {
+	public static String requestUpList(ArrayList<Integer> upList) throws IOException {
 		String arg = "";
 		for (int i = 0; i < upList.size(); i++) {
 			arg += upList.get(i);
@@ -48,11 +48,11 @@ public class Request {
 		return request(String.format(REQ_GET_UPLIST, arg));
 	}
 	
-	public static String requestDownList(String[] provinces) throws ConnectTimeoutException, SocketTimeoutException, HttpHostConnectException {
+	public static String requestDownList(String[] provinces) throws IOException {
 		return requestDownList(provinces, 0);
 	}
 	
-	public static String requestDownList(String[] provinces, int startId) throws ConnectTimeoutException, SocketTimeoutException, HttpHostConnectException {
+	public static String requestDownList(String[] provinces, int startId) throws IOException {
 		String arg = "";
 		for (int i = 0; i < provinces.length; i++) {
 			arg += "'" + provinces[i] + "'";
@@ -65,11 +65,11 @@ public class Request {
 		return request(String.format(REQ_GET_DOWNLIST, arg, startId));
 	}
 	
-	public static String request() throws ConnectTimeoutException, SocketTimeoutException, HttpHostConnectException {
+	public static String request() throws IOException {
 		return request(REQ_DEFAULT);
 	}
 	
-	public static String request(String str) throws org.apache.http.conn.ConnectTimeoutException, java.net.SocketTimeoutException, org.apache.http.conn.HttpHostConnectException {
+	public static String request(String str) throws IOException {
 		str = str.replace("'", "xxaxx").replace("(", "xxbxx").replace(")", "xxcxx").replace(">", "xxdxx");
 		try {
 			HttpParams httpParameters = new BasicHttpParams();
@@ -104,14 +104,12 @@ public class Request {
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		
 		return "";
 	}
 	
-	public static String getVersion() throws ConnectTimeoutException, SocketTimeoutException, HttpHostConnectException {
+	public static String getVersion() throws IOException {
 		try {
 			HttpParams httpParameters = new BasicHttpParams();
 			HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
@@ -144,8 +142,6 @@ public class Request {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		

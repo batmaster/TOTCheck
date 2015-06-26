@@ -1,5 +1,6 @@
 package com.tot.totcheck;
 
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -141,6 +142,9 @@ public class FilterFragment extends Fragment {
 			} catch (HttpHostConnectException e) {
 				loading.setMessage("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้");
 				e.printStackTrace();
+			} catch (IOException e) {
+				loading.setMessage("มีปัญหาการเชื่อมต่อ");
+				e.printStackTrace();
 			}
 			return "some message";
 		}
@@ -207,6 +211,9 @@ public class FilterFragment extends Fragment {
 				loading.setMessage("รอผลตอบกลับนานเกินไป");
 			} catch (HttpHostConnectException e) {
 				loading.setMessage("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้");
+				e.printStackTrace();
+			} catch (IOException e) {
+				loading.setMessage("มีปัญหาการเชื่อมต่อ");
 				e.printStackTrace();
 			}
 			

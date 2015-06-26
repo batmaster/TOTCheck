@@ -197,6 +197,10 @@ public class MainFragmentActivity extends FragmentActivity {
 				loading.setMessage("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้");
 				version = "";
 				e.printStackTrace();
+			} catch (IOException e) {
+				loading.setMessage("มีปัญหาการเชื่อมต่อ");
+				version = "";
+				e.printStackTrace();
 			}
 			return "some message";
 		}
