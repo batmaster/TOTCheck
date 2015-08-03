@@ -23,47 +23,43 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-public class NotificationService extends Service {
+public class NotificationReceiver extends BroadcastReceiver {
 	
 	private static final int NOTIFICATION_DOWN_CODE = 65535;
 	private static final int NOTIFICATION_UP_CODE = 65536;
 	
 	private static NotificationManager notificationManager;
 	private static PendingIntent pIntent;
-
+	
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		Toast.makeText(getApplicationContext(), "run", Toast.LENGTH_SHORT).show();
+	public void onReceive(Context context, Intent intent) {
+//		Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+//		v.vibrate(400);
+//		Toast.makeText(context, "run", Toast.LENGTH_SHORT).show();
+		
 //		SharedValues.setLastestNotifiedId(context, 0);
-		if (SharedValues.getEnableStatePref(getApplicationContext(), SharedValues.TOT_PREF_SETTINGS, "notification")) {
+		if (SharedValues.getEnableStatePref(context, SharedValues.TOT_PREF_SETTINGS, "notification")) {
 			if (notificationManager == null)
-				notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+				notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			
 			if (pIntent == null) {
-				Intent appIntent = new Intent(getApplicationContext(), MainFragmentActivity.class);
+				Intent appIntent = new Intent(context, MainFragmentActivity.class);
 				appIntent.putExtra("notificationTab", true);
 				appIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				pIntent = PendingIntent.getActivity(getApplicationContext(), 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				pIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			}
 			
-			GetDownTask jobDown = new GetDownTask(getApplicationContext());
+			GetDownTask jobDown = new GetDownTask(context);
 			jobDown.execute();
 			
-			GetUpTask jobUp = new GetUpTask(getApplicationContext());
+			GetUpTask jobUp = new GetUpTask(context);
 			jobUp.execute();
 		}
-		
-		return super.onStartCommand(intent, flags, startId);
-	}
-
-	@Override
-	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	private class GetDownTask extends AsyncTask<String, Integer, String> {

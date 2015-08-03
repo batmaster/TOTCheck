@@ -23,9 +23,11 @@ import org.json.JSONObject;
 import android.app.ActionBar;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
@@ -39,6 +41,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -122,11 +125,15 @@ public class MainFragmentActivity extends FragmentActivity {
 		tabSetting.setTabListener(tabListener);
 		actionBar.addTab(tabSetting);
 		
-//		boolean start = isServiceRunning(NotificationService.class);
-//		if (!start) {
-//			Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
-//			startService(notificationService);
-//		}
+		boolean start = isServiceRunning(NotificationReceiver.class);
+		if (!start) {
+//			Toast.makeText(getApplicationContext(), "start from main", Toast.LENGTH_SHORT).show();
+			
+			Intent alarmIntent = new Intent(getApplicationContext(), NotificationReceiver.class);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 19096, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+			alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 60000, pendingIntent);
+		}
 		
 		boolean notificationTab = getIntent().getBooleanExtra("notificationTab", false);
 		if (notificationTab) {
@@ -139,10 +146,17 @@ public class MainFragmentActivity extends FragmentActivity {
 			apk.delete();
 	}
 	
+	private MenuItem updateText;
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.main_activity_actions, menu);
+	    updateText = menu.findItem(R.id.updateText);
+	    
+	    CheckUpdateTask task = new CheckUpdateTask(true);
+    	task.execute();
+
 	    return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -150,7 +164,8 @@ public class MainFragmentActivity extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
         case R.id.logo:
-        	CheckUpdateTask task = new CheckUpdateTask();
+        case R.id.updateText:
+        	CheckUpdateTask task = new CheckUpdateTask(false);
         	task.execute();
             return true;
         default:
@@ -171,10 +186,12 @@ public class MainFragmentActivity extends FragmentActivity {
 	private class CheckUpdateTask extends AsyncTask<String, Integer, String> {
 
 		private String version;
+		private boolean inBackground;
 		
 		private ProgressDialog loading;
 		
-		public CheckUpdateTask() {
+		public CheckUpdateTask(boolean inBackground) {
+			this.inBackground = inBackground;
 			loading = new ProgressDialog(MainFragmentActivity.this);
 			loading.setTitle("ตรวจสอบเวอร์ชันล่าสุด");
 			loading.setMessage("กำลังโหลด...");
@@ -207,71 +224,94 @@ public class MainFragmentActivity extends FragmentActivity {
 
 		@Override
 		protected void onPreExecute() {
-			loading.show();
+			if (!inBackground) {
+				loading.show();
+			}
 			super.onPreExecute();
 		}
 
 		@Override
 		protected void onPostExecute(String message) {
-			loading.dismiss();
-			
-        	final Dialog dialog = new Dialog(MainFragmentActivity.this);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.about_dialog);
-            dialog.setCancelable(true);
-            
-            if (!version.equals("")) {
-	            double currentVersionName = 0;
-				try {
-					currentVersionName = Double.parseDouble(getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
-				} catch (NameNotFoundException e) {
-					e.printStackTrace();
-				}
-	            double versionName = Double.parseDouble(version.split(",")[0]);
+			if (!inBackground) {
+				loading.dismiss();
+				
+	        	final Dialog dialog = new Dialog(MainFragmentActivity.this);
+	            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	            dialog.setContentView(R.layout.about_dialog);
+	            dialog.setCancelable(true);
 	            
-	            if (currentVersionName == versionName) {
+	            if (!version.equals("")) {
+		            double currentVersionName = 0;
+					try {
+						currentVersionName = Double.parseDouble(getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+					} catch (NameNotFoundException e) {
+						e.printStackTrace();
+					}
+		            double versionName = Double.parseDouble(version.split(",")[0]);
+		            
+		            if (currentVersionName == versionName) {
+		            	TextView textViewCurrentVersionName = (TextView) dialog.findViewById(R.id.textViewCurrentVersionName);
+		            	textViewCurrentVersionName.setText("เวอร์ชันปัจจุบัน " + currentVersionName);
+		            	
+		            	TextView textViewNewVersionName = (TextView) dialog.findViewById(R.id.textViewNewVersionName);
+		            	textViewNewVersionName.setText("เวอร์ชันล่าสุดแล้ว");
+		
+		            	Button buttonUpdate = (Button) dialog.findViewById(R.id.buttonUpdate);
+		            	buttonUpdate.setVisibility(View.GONE);
+		            }
+		            else {
+		            	TextView textViewCurrentVersionName = (TextView) dialog.findViewById(R.id.textViewCurrentVersionName);
+		            	textViewCurrentVersionName.setText("เวอร์ชันปัจจุบัน " + currentVersionName);
+		            	
+		            	TextView textViewNewVersionName = (TextView) dialog.findViewById(R.id.textViewNewVersionName);
+		            	textViewNewVersionName.setText("เวอร์ชันล่าสุด " + versionName);
+		
+		                Button buttonUpdate = (Button) dialog.findViewById(R.id.buttonUpdate);
+		                buttonUpdate.setOnClickListener(new OnClickListener() {
+							
+							@Override
+							public void onClick(View v) {
+								LoadAPKTask task = new LoadAPKTask();
+								task.execute();
+							}
+						});
+		                
+		                if (currentVersionName > versionName)
+		                	buttonUpdate.setVisibility(View.GONE);
+		            }
+	            }
+	            else {
 	            	TextView textViewCurrentVersionName = (TextView) dialog.findViewById(R.id.textViewCurrentVersionName);
-	            	textViewCurrentVersionName.setText("เวอร์ชันปัจจุบัน " + currentVersionName);
-	            	
+	            	textViewCurrentVersionName.setText("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ 1");
+	
 	            	TextView textViewNewVersionName = (TextView) dialog.findViewById(R.id.textViewNewVersionName);
-	            	textViewNewVersionName.setText("เวอร์ชันล่าสุดแล้ว");
+	            	textViewNewVersionName.setVisibility(View.GONE);
 	
 	            	Button buttonUpdate = (Button) dialog.findViewById(R.id.buttonUpdate);
 	            	buttonUpdate.setVisibility(View.GONE);
 	            }
-	            else {
-	            	TextView textViewCurrentVersionName = (TextView) dialog.findViewById(R.id.textViewCurrentVersionName);
-	            	textViewCurrentVersionName.setText("เวอร์ชันปัจจุบัน " + currentVersionName);
-	            	
-	            	TextView textViewNewVersionName = (TextView) dialog.findViewById(R.id.textViewNewVersionName);
-	            	textViewNewVersionName.setText("เวอร์ชันล่าสุด " + versionName);
-	
-	                Button buttonUpdate = (Button) dialog.findViewById(R.id.buttonUpdate);
-	                buttonUpdate.setOnClickListener(new OnClickListener() {
-						
-						@Override
-						public void onClick(View v) {
-							LoadAPKTask task = new LoadAPKTask();
-							task.execute();
-						}
-					});
-	                
-	                if (currentVersionName > versionName)
-	                	buttonUpdate.setVisibility(View.GONE);
-	            }
-            }
-            else {
-            	TextView textViewCurrentVersionName = (TextView) dialog.findViewById(R.id.textViewCurrentVersionName);
-            	textViewCurrentVersionName.setText("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ 1");
-
-            	TextView textViewNewVersionName = (TextView) dialog.findViewById(R.id.textViewNewVersionName);
-            	textViewNewVersionName.setVisibility(View.GONE);
-
-            	Button buttonUpdate = (Button) dialog.findViewById(R.id.buttonUpdate);
-            	buttonUpdate.setVisibility(View.GONE);
-            }
-            
-            dialog.show();
+	            
+	            dialog.show();
+			}
+			else {
+				if (!version.equals("")) {
+		            double currentVersionName = 0;
+					try {
+						currentVersionName = Double.parseDouble(getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+					} catch (NameNotFoundException e) {
+						e.printStackTrace();
+					}
+		            double versionName = Double.parseDouble(version.split(",")[0]);
+		            
+		            if (currentVersionName == versionName) {
+		            	
+		            }
+		            else {
+		            	if (!(currentVersionName > versionName))
+		            		updateText.setVisible(true);
+		            }
+				}
+			}
 		}
 		
 		public AsyncTask<String, Integer, String> execute() {

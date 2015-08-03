@@ -62,7 +62,7 @@ containing a value of this type.
         public static final int imageViewIcon=0x7f080010;
         public static final int linearLayoutSetting=0x7f080008;
         public static final int listView=0x7f080005;
-        public static final int logo=0x7f080014;
+        public static final int logo=0x7f080015;
         public static final int pager=0x7f080003;
         public static final int preferenceBoxViewNotification=0x7f080006;
         public static final int scrollView=0x7f080007;
@@ -79,6 +79,7 @@ containing a value of this type.
         public static final int textViewStatus=0x7f080011;
         public static final int textViewTemp=0x7f08000c;
         public static final int textViewTime=0x7f080012;
+        public static final int updateText=0x7f080014;
     }
     public static final class layout {
         public static final int about_dialog=0x7f030000;
