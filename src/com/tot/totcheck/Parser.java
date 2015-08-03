@@ -20,8 +20,8 @@ public class Parser {
 		result = result.replace("!!!", "");
 		result = result.trim();
 		try {
-		if (result.charAt(result.length() - 1) == ',')
-			result = result.substring(0, result.length() - 1);
+			if (result.charAt(result.length() - 1) == ',')
+				result = result.substring(0, result.length() - 1);
 		} catch (StringIndexOutOfBoundsException e) {}
 		return "[" + result + "]";
 	}

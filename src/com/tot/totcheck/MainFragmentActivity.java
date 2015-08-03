@@ -122,11 +122,11 @@ public class MainFragmentActivity extends FragmentActivity {
 		tabSetting.setTabListener(tabListener);
 		actionBar.addTab(tabSetting);
 		
-		boolean start = isServiceRunning(NotificationService.class);
-		if (!start) {
-			Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
-			startService(notificationService);
-		}
+//		boolean start = isServiceRunning(NotificationService.class);
+//		if (!start) {
+//			Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
+//			startService(notificationService);
+//		}
 		
 		boolean notificationTab = getIntent().getBooleanExtra("notificationTab", false);
 		if (notificationTab) {
