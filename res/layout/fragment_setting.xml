@@ -16,8 +16,7 @@
         android:layout_height="wrap_content"
         android:background="#E3E3E3"
         custom:title="เปิดการใช้งานการแจ้งเตือน"
-        custom:text="แจ้งเตือนบนแถบสถานะ"
-        custom:key="notification" />
+        custom:text="แจ้งเตือนบนแถบสถานะ" />
 
     <ScrollView
         android:id="@+id/scrollView"

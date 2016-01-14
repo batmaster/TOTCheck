@@ -24,49 +24,24 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
+import android.content.Context;
+
 public class Request {
-	
-	public static final String REQ_GET_PROVINCES = "SELECT s.province AS province, SUM(CASE WHEN smsdown = 'yes' AND smsup = '' THEN 1 ELSE 0 END) AS amount FROM sector s, nodeumbo n WHERE n.node_sector = s.umbo GROUP BY s.province ORDER BY s.province";
-	public static final String REQ_DEFAULT = "";
-	private static final String REQ_GET_DOWNLIST = "SELECT n.*, s.province FROM nodeumbo n, sector s WHERE n.node_sector = s.umbo AND s.province IN (%s) AND smsdown = 'yes' AND smsup = '' AND n.id_nu > %d ORDER BY n.id_nu DESC";
-	private static final String REQ_GET_UPLIST = "SELECT n.*, s.province FROM nodeumbo n, sector s WHERE n.node_sector = s.umbo AND n.id_nu IN (%s) AND smsdown = 'yes' AND smsup = 'yes' ORDER BY n.id_nu DESC";
 	
 	private Request() {
 		
 	}
 	
-	public static String requestUpList(ArrayList<Integer> upList) throws IOException {
-		String arg = "";
-		for (int i = 0; i < upList.size(); i++) {
-			arg += upList.get(i);
-			if (i != upList.size() - 1)
-				arg += ",";
-		}
-		if (upList.size() == 0)
-			arg += "0";
-		
-		return request(String.format(REQ_GET_UPLIST, arg));
+	public static String requestProvincesAndAmount() throws IOException {
+		return request("SELECT s.province AS province, SUM(CASE WHEN smsdown = 'yes' AND smsup = '' THEN 1 ELSE 0 END) AS amount FROM sector s, nodeumbo n WHERE n.node_sector = s.umbo GROUP BY s.province ORDER BY s.province");
 	}
 	
-	public static String requestDownList(String[] provinces) throws IOException {
-		return requestDownList(provinces, 0);
+	public static String requestDownList(Context context) throws IOException {
+		return request(String.format("SELECT n.*, s.province FROM nodeumbo n, sector s WHERE n.node_sector = s.umbo AND s.province IN ((SELECT province WHERE pushdevice_id = (SELECT id FROM pushdevice WHERE regId = %s))) AND smsdown = 'yes' AND smsup = ''", SharedValues.getStringPref(context, SharedValues.KEY_REGID)));
 	}
 	
-	public static String requestDownList(String[] provinces, int startId) throws IOException {
-		String arg = "";
-		for (int i = 0; i < provinces.length; i++) {
-			arg += "'" + provinces[i] + "'";
-			if (i != provinces.length - 1)
-				arg += ",";
-		}
-		if (provinces.length == 0)
-			arg += "'z'";
-		
-		return request(String.format(REQ_GET_DOWNLIST, arg, startId));
-	}
-	
-	public static String request() throws IOException {
-		return request(REQ_DEFAULT);
+	public static String requestDownList(String province) throws IOException {
+		return request(String.format("SELECT n.*, s.province FROM nodeumbo n, sector s WHERE n.node_sector = s.umbo AND s.province IN (%s) AND smsdown = 'yes' AND smsup = ''", province));
 	}
 	
 	public static String request(String str) throws IOException {
@@ -146,5 +121,17 @@ public class Request {
 		}
 		
 		return "";
+	}
+
+	public static void setStateProvince(Context context, String province, boolean state) throws IOException {
+		String regId = SharedValues.getStringPref(context, SharedValues.KEY_REGID);
+		String sql = "";
+		if (state)
+			sql = String.format("INSERT INTO province_pref (pushdevice_id, province) VALUES ((SELECT id FROM pushdevice WHERE regId = '%s'), '%s')", regId, province);
+		else
+			sql = String.format("DELETE FROM province_pref WHERE pushdevice_id = (SELECT id FROM pushdevice WHERE regId = '%s') AND province = '%s'", regId, province);
+		
+		
+		request(sql);
 	}
 }

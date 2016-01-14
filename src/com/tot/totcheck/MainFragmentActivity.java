@@ -63,12 +63,30 @@ public class MainFragmentActivity extends FragmentActivity {
 	
 	private ViewPager viewPager;
 	private ActionBar actionBar;
+	private MenuItem updateText;
 	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_fragment);
+//		
+//new AsyncTask<Void, Void, Void>() {
+//
+//	@Override
+//	protected Void doInBackground(Void... params) {
+//		try {
+//			System.out.println(Parser.parse(Request.request("SELECT * FROM sector")));
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
+//	
+//}.execute();
+			
+		
+
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
 		viewPager.setOffscreenPageLimit(3);
@@ -89,12 +107,6 @@ public class MainFragmentActivity extends FragmentActivity {
 				
 			}
 		});
-		
-		ServerUtilities.register(getApplicationContext());
-//		if (ServerUtilities.getRegIdPref(getApplicationContext()) != null) {
-			Log.d("gcm", ServerUtilities.getRegIdPref(getApplicationContext()));
-////			buttonRegister.setVisibility(View.GONE);
-//		}
 		
 		actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -141,9 +153,10 @@ public class MainFragmentActivity extends FragmentActivity {
 		File apk = new File(SharedValues.FILE_PATH, SharedValues.FILE_NAME);
 		if (apk.exists())
 			apk.delete();
+		
+
+		ServerUtilities.register(getApplicationContext());
 	}
-	
-	private MenuItem updateText;
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -169,16 +182,6 @@ public class MainFragmentActivity extends FragmentActivity {
             return super.onOptionsItemSelected(item);
 		}
 	};
-	
-	private boolean isServiceRunning(Class<?> serviceClass) {
-	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-	        if (serviceClass.getName().equals(service.service.getClassName())) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
 	
 	private class CheckUpdateTask extends AsyncTask<String, Integer, String> {
 

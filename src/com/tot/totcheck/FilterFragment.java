@@ -64,7 +64,7 @@ public class FilterFragment extends Fragment {
 				String province = ((TextView) view.findViewById(R.id.textViewProvince)).getText().toString();
 				GetListTask job = new GetListTask(province);
 				job.execute();
-				SharedValues.setLastUsedProvince(getActivity().getApplicationContext(), province);
+				SharedValues.setStringPref(getActivity().getApplicationContext(), SharedValues.KEY_LAST_USED_PROVINCE, province);
 			}
 
 			@Override
@@ -125,7 +125,7 @@ public class FilterFragment extends Fragment {
 			list = new ArrayList<SpinnerRowItem>();
 			
 			try {
-				String parsed = Parser.parse(Request.request(Request.REQ_GET_PROVINCES));
+				String parsed = Parser.parse(Request.requestProvincesAndAmount());
 				JSONArray js = new JSONArray(parsed);
 				for (int i = 0; i < js.length(); i++) {
 					JSONObject jo = js.getJSONObject(i);
@@ -161,7 +161,7 @@ public class FilterFragment extends Fragment {
 			SpinnerRowAdapter adapter = new SpinnerRowAdapter(getActivity().getApplicationContext(), list);
 			spinnerProvinces.setAdapter(adapter);
 
-			String x = SharedValues.getLastUsedProvince(getActivity().getApplicationContext());
+			String x = SharedValues.getStringPref(getActivity().getApplicationContext(), SharedValues.KEY_LAST_USED_PROVINCE);
 			for (int i = 0; i < list.size(); i++) {
 				if (list.get(i).getProvince().equals(x))
 					spinnerProvinces.setSelection(i);
@@ -194,7 +194,7 @@ public class FilterFragment extends Fragment {
 			list = new ArrayList<ListViewRowItem>();
 			
 			try {
-				String parsed = Parser.parse(Request.requestDownList(new String[]{province}));
+				String parsed = Parser.parse(Request.requestDownList(province));
 				JSONArray js = new JSONArray(parsed);
 				for (int i = 0; i < js.length(); i++) {
 					JSONObject jo = js.getJSONObject(i);

@@ -69,7 +69,6 @@ public final class ServerUtilities {
             @Override
             protected void onPostExecute(String msg) {
                 if (!TextUtils.isEmpty(regId)) {
-                    // Store RegId created by GCM Server in SharedPref
                     storeRegIdinSharedPref(context, regId);
                     Toast.makeText(context, "Registered with GCM Server successfully.nn" + msg, Toast.LENGTH_SHORT).show();
                 } else { 
@@ -79,35 +78,63 @@ public final class ServerUtilities {
         }.execute(null, null, null);
     }
     
-    public static String getRegIdPref(Context context) {
-    	SharedPreferences prefs = context.getSharedPreferences("UserDetails", Context.MODE_PRIVATE);
-    	return prefs.getString("regId", null);
-    }
-    
     private static void storeRegIdinSharedPref(Context context, String regId) {
-        SharedPreferences prefs = context.getSharedPreferences("UserDetails", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("regId", regId);
-        editor.commit();
-        new AsyncTask<String, Void, Void>() {
-
-			@Override
-			protected Void doInBackground(String... params) {
-		        storeRegIdinServer(params[0]);
-				return null;
-			}
-
-			@Override
-			protected void onPostExecute(Void result) {
-				// TODO Auto-generated method stub
-				super.onPostExecute(result);
-			}
-        	
-        }.execute(regId);
+    	String old_regId = SharedValues.getStringPref(context, SharedValues.KEY_REGID);
+    	if (old_regId == null) {
+    		SharedValues.setStringPref(context, SharedValues.KEY_REGID, regId);
+    		
+	        new AsyncTask<String, Void, Void>() {
+				@Override
+				protected Void doInBackground(String... params) {
+			        storeRegIdinServer(params[0]);
+					return null;
+				}        	
+	        }.execute(regId);
+    	}
+    	else {
+    		if (old_regId != regId) {
+    			new AsyncTask<String, Void, Void>() {
+    				@Override
+    				protected Void doInBackground(String... params) {
+    					updateRegIdinServer(params[0], params[1]);
+    					return null;
+    				}        	
+    	        }.execute(regId, old_regId);
+    		}
+    		else {
+    			
+    		}
+    	}
  
     }
     
-    private static String storeRegIdinServer(String regId) {
+    private static void updateRegIdinServer(String regId, String oldRegId) {
+    	String str = "UPDATE pushdevice SET regId = '" + regId + "', date = NOW() WHERE regId = '" + oldRegId + "'";
+		str = str.replace("'", "xxaxx").replace("(", "xxbxx").replace(")", "xxcxx").replace(">", "xxdxx");
+		try {
+			HttpParams httpParameters = new BasicHttpParams();
+			HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
+			HttpConnectionParams.setSoTimeout(httpParameters, 10000);
+
+			HttpClient httpClient = new DefaultHttpClient(httpParameters);
+			HttpPost httpPost = new HttpPost("http://192.168.20.123:8888/reg.php");
+	
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("sql", str));
+			
+			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+			HttpResponse httpResponse = httpClient.execute(httpPost);
+	
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+}
+    
+    private static void storeRegIdinServer(String regId) {
     		String str = "INSERT INTO pushdevice (regId, date) VALUES ('" + regId + "', NOW())";
     		str = str.replace("'", "xxaxx").replace("(", "xxbxx").replace(")", "xxcxx").replace(">", "xxdxx");
     		try {
@@ -122,23 +149,8 @@ public final class ServerUtilities {
     			nameValuePairs.add(new BasicNameValuePair("sql", str));
     			
     			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-    	
     			HttpResponse httpResponse = httpClient.execute(httpPost);
-    			HttpEntity entity = httpResponse.getEntity();
     	
-    			if (entity != null) {
-    				InputStream is = entity.getContent();
-    				StringBuffer sb = new StringBuffer();
-    				String line = null;
-    	
-    				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-    				while ((line = reader.readLine()) != null) {
-    					sb.append(line + "!!!");
-    				}
-    				reader.close();
-    				Log.d("gcm", sb.toString());
-    				return sb.toString();
-    			}
     		} catch (UnsupportedEncodingException e) {
     			e.printStackTrace();
     		} catch (ClientProtocolException e) {
@@ -146,7 +158,5 @@ public final class ServerUtilities {
     		} catch (IOException e) {
 				e.printStackTrace();
 			}
-    		
-    		return "";
     }
 }

@@ -1,9 +1,22 @@
 package com.tot.totcheck;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.HttpHostConnectException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CheckBox;
@@ -20,7 +33,7 @@ public class PreferenceBoxView extends RelativeLayout {
 	private TextView textViewTitle;
 	private TextView textViewText;
 	private CheckBox checkBoxEnable;
-	private String pref;
+//	private String pref;
 
 	private String key;
 	
@@ -38,7 +51,7 @@ public class PreferenceBoxView extends RelativeLayout {
 		super(context, attrs, defStyle);
 		setPadding(30, 30, 30, 30);
 
-		pref = SharedValues.TOT_PREF_SETTINGS;
+//		pref = SharedValues.TOT_PREF_SETTINGS;
 		
 		RelativeLayout.LayoutParams textViewTitleLayoutParam = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		textViewTitleLayoutParam.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -63,13 +76,18 @@ public class PreferenceBoxView extends RelativeLayout {
 		textViewTitle.setText(arrs.getString(R.styleable.PreferenceBoxView_title));
 		textViewText.setText(arrs.getString(R.styleable.PreferenceBoxView_text));
 		checkBoxEnable.setChecked(arrs.getBoolean(R.styleable.PreferenceBoxView_checked, false));
-		key = arrs.getString(R.styleable.PreferenceBoxView_key) ;
+//		key = arrs.getString(R.styleable.PreferenceBoxView_key) ;
 		
 		checkBoxEnable.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				SharedValues.setEnableStatePref(context, pref, key, isChecked);
+//				SharedValues.setEnableStatePref(context, pref, key, isChecked);
+//				
+				if (key.equals(SharedValues.KEY_NOTIFICATION))
+					SharedValues.setBooleanPref(context, key, isChecked);
+				else
+					new SetStateProvinceTask(context, key, isChecked).execute();
 			}
 		});
 		
@@ -108,13 +126,43 @@ public class PreferenceBoxView extends RelativeLayout {
 	public boolean getChecked() {
 		return checkBoxEnable.isChecked();
 	}
+	
+	private class SetStateProvinceTask extends AsyncTask<String, Integer, String> {
 
-	public String getPref() {
-		return pref;
+		private Context context;
+		private String province;
+		private boolean state;
+		
+		public SetStateProvinceTask(Context context, String province, boolean state) {
+			this.context = context;
+			this.province = province;
+			this.state = state;
+		}
+		
+		@Override
+		protected String doInBackground(String[] params) {
+			try {
+				Request.setStateProvince(context, province, state);
+				SharedValues.setBooleanPref(context, key, state);
+			} catch (IOException e) {
+				// need uncheck ??
+				e.printStackTrace();
+			}
+			
+			return "some message";
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected void onPostExecute(String message) {
+		}
+		
+		public void execute() {
+			execute("test");
+		}
 	}
-
-	public void setPref(String pref) {
-		this.pref = pref;
-	}
-
 }

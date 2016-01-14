@@ -58,7 +58,9 @@ public class SettingFragment extends Fragment {
 		});
 		
 		preferenceBoxViewNotification = (PreferenceBoxView) view.findViewById(R.id.preferenceBoxViewNotification);
-		preferenceBoxViewNotification.setChecked(SharedValues.getEnableStatePref(getActivity().getApplicationContext(), SharedValues.TOT_PREF_SETTINGS, "notification"));
+		preferenceBoxViewNotification.setKey(SharedValues.KEY_NOTIFICATION);
+		preferenceBoxViewNotification.setChecked(SharedValues.getBooleanPref(getActivity().getApplicationContext(), SharedValues.KEY_NOTIFICATION));
+		
 		
 		linearLayoutSetting = (LinearLayout) view.findViewById(R.id.linearLayoutSetting);
 		GetProvincesTask getProvinces = new GetProvincesTask();
@@ -100,16 +102,12 @@ public class SettingFragment extends Fragment {
 		@Override
 		protected String doInBackground(String[] params) {
 			try {
-				String parsed = Parser.parse(Request.request(Request.REQ_GET_PROVINCES));
+				String parsed = Parser.parse(Request.requestProvincesAndAmount());
 				JSONArray js = new JSONArray(parsed);
 				provinces = new String[js.length()];
 				for (int i = 0; i < js.length(); i++) {
 					JSONObject jo = js.getJSONObject(i);
 					provinces[i] = jo.getString("province");
-					boolean has = SharedValues.hasEnableStatePref(context, SharedValues.TOT_PREF_PROVINCES, provinces[i]);
-					if (!has) {
-						SharedValues.setEnableStatePref(context, SharedValues.TOT_PREF_PROVINCES, provinces[i], false);
-					}
 				}
 				
 			} catch (JSONException e) {
@@ -141,8 +139,7 @@ public class SettingFragment extends Fragment {
 				PreferenceBoxView box = new PreferenceBoxView(context);
 				box.setTitle(provinces[i]);
 				box.setKey(provinces[i]);
-				box.setPref(SharedValues.TOT_PREF_PROVINCES);
-				box.setChecked(SharedValues.getEnableStatePref(context, SharedValues.TOT_PREF_PROVINCES, provinces[i]));
+				box.setChecked(SharedValues.getStateProvince(context, provinces[i]));
 				linearLayoutSetting.addView(box);
 			}
 			

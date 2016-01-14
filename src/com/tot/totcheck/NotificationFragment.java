@@ -105,7 +105,7 @@ public class NotificationFragment extends Fragment {
 			list = new ArrayList<ListViewRowItem>();
 			
 			try {
-				String parsed = Parser.parse(Request.requestDownList(SharedValues.getEnableProvinces(context)));
+				String parsed = Parser.parse(Request.requestDownList(context));
 				JSONArray js = new JSONArray(parsed);
 				for (int i = 0; i < js.length(); i++) {
 					JSONObject jo = js.getJSONObject(i);
