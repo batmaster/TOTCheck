@@ -9,19 +9,17 @@ public class ListViewRowItem {
 	private String node_id;
 	private String node_ip;
 	private String node_time_down;
-	private String smsdown;
-	private String smsup;
-	
+
 	private String node_name;
 	private String temp;
 	
 	private String province;
 	
 	public ListViewRowItem() {
-		this("", "", "", "", "", "", "ไม่มีรายการ", "", "");
+		this("", "", "", "", "ไม่มีรายการ", "", "");
 	}
 	
-	public ListViewRowItem(String id_nu, String node_id, String node_ip, String node_time_down, String smsdown, String smsup, String node_name, String temp, String province) {
+	public ListViewRowItem(String id_nu, String node_id, String node_ip, String node_time_down, String node_name, String temp, String province) {
 		this.id_nu = id_nu;
 		this.node_id = node_id;
 		this.node_ip = node_ip;
@@ -30,8 +28,6 @@ public class ListViewRowItem {
 		} catch (NumberFormatException e) {
 			this.node_time_down = "";
 		}
-		this.smsdown = smsdown;
-		this.smsup = smsup;
 		this.node_name = node_name;
 		this.temp = temp;
 		this.province = province;
@@ -67,22 +63,6 @@ public class ListViewRowItem {
 
 	public void setNode_time_down(String node_time_down) {
 		this.node_time_down = node_time_down;
-	}
-
-	public String getSmsdown() {
-		return smsdown;
-	}
-
-	public void setSmsdown(String smsdown) {
-		this.smsdown = smsdown;
-	}
-
-	public String getSmsup() {
-		return smsup;
-	}
-
-	public void setSmsup(String smsup) {
-		this.smsup = smsup;
 	}
 
 	public String getNode_name() {

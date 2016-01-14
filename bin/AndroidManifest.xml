@@ -9,12 +9,18 @@
         android:targetSdkVersion="15" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INSTALL_PACKAGES" />
-    
     <uses-permission android:name="android.permission.VIBRATE"/>
+    
+    <permission
+        android:name="com.example.pushtestapp.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+ 
+    <uses-permission android:name="com.example.pushtestapp.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:allowBackup="true"
@@ -33,20 +39,20 @@
         </activity>
         
         <receiver
-            android:name="com.tot.totcheck.NotificationReceiver"
-            android:enabled="true" >
-      	</receiver>
-      	
-        <receiver
-            android:name="com.tot.totcheck.BootReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-      	</receiver>
-      	
-        <!-- <service
-            android:name="com.tot.totcheck.NotificationService">
-        </service> -->
+		    android:name="com.google.android.gms.gcm.GcmReceiver" android:exported="true"
+		    android:permission="com.google.android.c2dm.permission.SEND" >
+		    <intent-filter>
+		        <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+		        <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+		        <category android:name="com.tot.totcheck" />
+		    </intent-filter>
+		</receiver>
+		<service
+		    android:name="com.tot.totcheck.GCMNotificationIntentService" android:exported="false" >
+		    <intent-filter>
+		        <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+		    </intent-filter>
+		</service>
       	
     </application>
 

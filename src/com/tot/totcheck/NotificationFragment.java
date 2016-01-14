@@ -109,7 +109,7 @@ public class NotificationFragment extends Fragment {
 				JSONArray js = new JSONArray(parsed);
 				for (int i = 0; i < js.length(); i++) {
 					JSONObject jo = js.getJSONObject(i);
-					ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("smsdown"), jo.getString("smsup"), jo.getString("node_name"), jo.getString("temp"), jo.getString("province"));
+					ListViewRowItem item = new ListViewRowItem(jo.getString("id_nu"), jo.getString("node_id"), jo.getString("node_ip"), jo.getString("node_time_down"), jo.getString("node_name"), jo.getString("temp"), jo.getString("province"));
 					list.add(item);
 				}
 				

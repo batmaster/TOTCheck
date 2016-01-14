@@ -39,6 +39,8 @@ public class SharedValues {
 	public static final String TOT_SQLITE_DB = "umbo.db";
 	public static final String TOT_SQLITE_UP_LISTENING_TABLE = "upListening";
 	
+	public static final String SENDER_ID = "748562068269";
+	
 	private SharedValues () {
 		
 	}

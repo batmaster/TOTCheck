@@ -48,6 +48,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -89,6 +90,12 @@ public class MainFragmentActivity extends FragmentActivity {
 			}
 		});
 		
+		ServerUtilities.register(getApplicationContext());
+//		if (ServerUtilities.getRegIdPref(getApplicationContext()) != null) {
+			Log.d("gcm", ServerUtilities.getRegIdPref(getApplicationContext()));
+////			buttonRegister.setVisibility(View.GONE);
+//		}
+		
 		actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		
@@ -124,16 +131,6 @@ public class MainFragmentActivity extends FragmentActivity {
 		tabSetting.setText("ตั้งค่า");
 		tabSetting.setTabListener(tabListener);
 		actionBar.addTab(tabSetting);
-		
-		boolean start = isServiceRunning(NotificationReceiver.class);
-		if (!start) {
-//			Toast.makeText(getApplicationContext(), "start from main", Toast.LENGTH_SHORT).show();
-			
-			Intent alarmIntent = new Intent(getApplicationContext(), NotificationReceiver.class);
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 19096, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-			alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 60000, pendingIntent);
-		}
 		
 		boolean notificationTab = getIntent().getBooleanExtra("notificationTab", false);
 		if (notificationTab) {
