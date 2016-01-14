@@ -37,11 +37,11 @@ public class Request {
 	}
 	
 	public static String requestDownList(Context context) throws IOException {
-		return request(String.format("SELECT n.*, s.province FROM nodeumbo n, sector s WHERE n.node_sector = s.umbo AND s.province IN ((SELECT province WHERE pushdevice_id = (SELECT id FROM pushdevice WHERE regId = %s))) AND smsdown = 'yes' AND smsup = ''", SharedValues.getStringPref(context, SharedValues.KEY_REGID)));
+		return request(String.format("SELECT n.*, s.province FROM nodeumbo n, sector s WHERE n.node_sector = s.umbo AND s.province IN ((SELECT province FROM province_pref WHERE pushdevice_id = (SELECT id FROM pushdevice WHERE regId = '%s'))) AND smsdown = 'yes' AND smsup = ''", SharedValues.getStringPref(context, SharedValues.KEY_REGID)));
 	}
 	
 	public static String requestDownList(String province) throws IOException {
-		return request(String.format("SELECT n.*, s.province FROM nodeumbo n, sector s WHERE n.node_sector = s.umbo AND s.province IN (%s) AND smsdown = 'yes' AND smsup = ''", province));
+		return request(String.format("SELECT n.*, s.province FROM nodeumbo n, sector s WHERE n.node_sector = s.umbo AND s.province = '%s' AND smsdown = 'yes' AND smsup = ''", province));
 	}
 	
 	public static String request(String str) throws IOException {
