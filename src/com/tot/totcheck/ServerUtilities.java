@@ -105,7 +105,6 @@ public final class ServerUtilities {
     			
     		}
     	}
- 
     }
     
     private static void updateRegIdinServer(String regId, String oldRegId) {
@@ -117,7 +116,7 @@ public final class ServerUtilities {
 			HttpConnectionParams.setSoTimeout(httpParameters, 10000);
 
 			HttpClient httpClient = new DefaultHttpClient(httpParameters);
-			HttpPost httpPost = new HttpPost("http://192.168.20.123:8888/reg.php");
+			HttpPost httpPost = new HttpPost(SharedValues.HOST_DB);
 	
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("sql", str));
@@ -143,7 +142,7 @@ public final class ServerUtilities {
     			HttpConnectionParams.setSoTimeout(httpParameters, 10000);
 
     			HttpClient httpClient = new DefaultHttpClient(httpParameters);
-    			HttpPost httpPost = new HttpPost("http://192.168.20.123:8888/reg.php");
+    			HttpPost httpPost = new HttpPost(SharedValues.HOST_DB);
     	
     			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
     			nameValuePairs.add(new BasicNameValuePair("sql", str));

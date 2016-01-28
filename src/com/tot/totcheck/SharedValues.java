@@ -26,8 +26,8 @@ import android.util.Log;
 public class SharedValues {
 	
 	// http://128.199.145.53/tot/
-//	public static final String HOST_DB = "http://203.114.104.242/umbo/getRecord.php";
-	public static final String HOST_DB = "http://192.168.20.123:8888/reg.php";
+	public static final String HOST_DB = "http://203.114.104.242/umbo/getRecord.php";
+//	public static final String HOST_DB = "http://192.168.20.123:8888/reg.php";
 	public static final String HOST_VERSION = "http://203.114.104.242/umbo/getVersion.php";
 	
 	public final static String FILE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/totapk/";

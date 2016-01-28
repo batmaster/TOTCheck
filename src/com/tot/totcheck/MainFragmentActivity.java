@@ -291,6 +291,8 @@ public class MainFragmentActivity extends FragmentActivity {
 	            	buttonUpdate.setVisibility(View.GONE);
 	            }
 	            
+	            TextView textViewRegId = (TextView) dialog.findViewById(R.id.textViewRegId);
+	            textViewRegId.setText(SharedValues.getStringPref(getApplicationContext(), SharedValues.KEY_REGID));
 	            dialog.show();
 			}
 			else {

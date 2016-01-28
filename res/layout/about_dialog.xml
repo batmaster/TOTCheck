@@ -24,4 +24,11 @@
         android:layout_height="wrap_content"
         android:text="Update" />
 
+    <TextView
+        android:id="@+id/textViewRegId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="regId"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    
 </LinearLayout>
